@@ -10,6 +10,7 @@ import {
 } from "@ui/components/dialog";
 import { Input } from "@ui/components/input";
 import { Label } from "@ui/components/label";
+import { revalidateTag } from "next/cache";
 import { useState } from "react";
 
 export function AddUserDialog() {
@@ -38,7 +39,6 @@ export function AddUserDialog() {
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              defaultValue="Pedro Duarte"
               className="col-span-3"
             />
           </div>
@@ -51,7 +51,6 @@ export function AddUserDialog() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              defaultValue="random@example.com"
               className="col-span-3"
             />
           </div>
@@ -67,6 +66,7 @@ export function AddUserDialog() {
                 },
                 body: JSON.stringify({ email, name, status: "active" }),
               });
+              revalidateTag("users");
             }}
           >
             Save User
