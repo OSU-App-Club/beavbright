@@ -28,7 +28,7 @@ services:
     ports:
       - "3001:3000" # Reachable on localhost:3001, or api:3000 from within the Docker network
     depends_on:
-      - postgres # Start after the database
+      - db # Start after the database
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/beavbright # Hardcoded database credentials are usually a no-go, but totally fine in this situation
     develop:
@@ -42,11 +42,11 @@ services:
           path: package.json
         - action: rebuild
           path: ./apps/api/package.json
-  postgres: # Postgres Database
+  db: # Postgres Database
     image: postgres:latest
     ports:
       - "5432:5432" # Reachable on localhost:5432 or postgres:5432 from within the Docker network
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: beavbright
