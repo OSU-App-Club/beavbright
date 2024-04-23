@@ -1,7 +1,8 @@
 import { serve } from "@hono/node-server";
+// @ts-expect-error
+import { PrismaClient, User } from "database";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { PrismaClient, User } from "database";
 
 const client = new PrismaClient();
 const app = new Hono();
@@ -9,7 +10,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:3000"],
+    origin: "*",
   })
 );
 
@@ -47,4 +48,4 @@ app.delete("/users/:id", async (c) => {
   return c.json(user);
 });
 
-serve(app);
+serve({ fetch: app.fetch, port: 3001 });
