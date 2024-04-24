@@ -1,6 +1,7 @@
 {
     "name": "beavbright",
     "version": "1.0.0",
+    "license": "MIT",
     "private": true,
     "scripts": {
         "build": "turbo run build",
