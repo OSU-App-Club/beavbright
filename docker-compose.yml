@@ -26,7 +26,7 @@ services:
     build:
       dockerfile: api.Dockerfile # Path to API Dockerfile
     ports:
-      - "3001:3000" # Reachable on localhost:3001, or api:3000 from within the Docker network
+      - "3001:3001" # Reachable on localhost:3001, or api:3000 from within the Docker network
     depends_on:
       - db # Start after the database
     environment:
