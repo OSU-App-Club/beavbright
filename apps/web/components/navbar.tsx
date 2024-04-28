@@ -22,7 +22,9 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "@ui/components/ui/button";
 import { cn } from "@ui/lib/utils";
-import { Menu } from "lucide-react";
+import { BrainCog, Menu } from "lucide-react";
+import { sidebarNavItems } from "../app/platform/layout";
+import { SidebarNav } from "./nav-links";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -118,7 +120,7 @@ export function Navbar() {
   );
 }
 
-const ListItem: React.FC<any> = ({
+export const ListItem: React.FC<any> = ({
   title,
   href,
   description,
@@ -149,3 +151,61 @@ const ListItem: React.FC<any> = ({
 };
 
 ListItem.displayName = "ListItem";
+
+export default function PlatformNavbar({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  return (
+    <header className="sticky top-0 w-full">
+      <div className="container h-14 px-4 w-screen flex justify-between">
+        <div className="font-bold flex items-center mx-12 gap-4">
+          <BrainCog className="w-6 h-6" />
+          <a href="/" className=" font-bold text-xl"></a>
+        </div>
+
+        {/* mobile */}
+        <div className="flex md:hidden items-center justify-center gap-8 mx-4">
+          <ModeToggle />
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger className="px-2" asChild>
+              <Button variant="ghost">
+                <Menu className="h-5 w-5" onClick={() => setIsOpen(true)} />
+              </Button>
+            </SheetTrigger>
+
+            <SheetContent side={"left"}>
+              <SheetHeader>
+                <SheetTitle className="font-bold text-xl">NextJudge</SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col justify-center items-center gap-2 mt-4">
+                {routeList.map(({ href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    onClick={() => setIsOpen(false)}
+                    className={buttonVariants({ variant: "ghost" })}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <div className="hidden md:flex flex-row gap-4 justify-center items-center mx-12">
+          <ModeToggle />
+        </div>
+      </div>
+      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+        <aside className="hidden lg:flex flex-row justify-start items-start">
+          <SidebarNav items={sidebarNavItems} className="w-4/6" />
+        </aside>
+        <div className="flex-1 lg:max-w-4xl">{children}</div>
+      </div>
+    </header>
+  );
+}
