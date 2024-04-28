@@ -14,4 +14,5 @@ model User {
   status    String   @default("active")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  pin       Int?
 }
