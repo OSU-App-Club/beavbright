@@ -1,12 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import { Icons } from "@/components/icons";
 import { Button } from "@ui/components/ui/button";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
-import { Icons } from "@/components/icons";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push("/platform");
+  };
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
@@ -39,7 +46,7 @@ export default function LoginPage() {
               </div>
               <Input id="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" onClick={handleClick}>
               Login
             </Button>
             <Button variant="outline" className="w-full">
