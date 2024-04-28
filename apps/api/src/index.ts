@@ -9,7 +9,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: "*",
+    origin: ["http://localhost:3000"],
   })
 );
 
@@ -47,4 +47,4 @@ app.delete("/users/:id", async (c) => {
   return c.json(user);
 });
 
-serve({ fetch: app.fetch, port: 3001 });
+serve({ fetch: app.fetch });
