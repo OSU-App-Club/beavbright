@@ -9,6 +9,7 @@ type Course = {
 };
 
 type SearchParams = {
+  txt_term: string; // 202403 = Spring 2024
   pageOffset: number;
   pageMaxSize: number; // Max is 500
   txt_campus?: string; // "C" = Corvallis Campus
@@ -42,15 +43,14 @@ class CourseScraper {
   public async getCourses(term: string): Promise<Course[]> {
     const cookies = await this.getSession(term);
 
-    let set: Set<String> = new Set();
-    let courses: Course[] = [];
     const pageMax = 500;
 
     const initialSearch = await this.search(cookies, {
       pageOffset: 0,
       pageMaxSize: pageMax,
+      txt_term: term,
     });
-    courses.concat(initialSearch.courses);
+    const courses: Course[] = initialSearch.courses;
 
     const pool: Promise<SearchResult>[] = [];
     for (
@@ -58,12 +58,20 @@ class CourseScraper {
       offset < initialSearch.totalCount;
       offset += pageMax
     ) {
-      pool.push(this.search(cookies, { pageOffset: 0, pageMaxSize: pageMax }));
+      pool.push(
+        this.search(cookies, {
+          pageOffset: 0,
+          pageMaxSize: pageMax,
+          txt_term: term,
+        })
+      );
     }
     const results = await Promise.all(pool);
 
     for (const result of results) {
-      courses.concat(result.courses);
+      for (const course of result.courses) {
+        courses.push(course);
+      }
     }
 
     return courses;
