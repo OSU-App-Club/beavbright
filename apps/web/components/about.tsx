@@ -5,14 +5,8 @@ import {
   CardTitle,
 } from "@ui/components/card";
 
-import { MagicWandIcon } from "@radix-ui/react-icons";
-import {
-  Book,
-  CircleSlash2Icon,
-  Group,
-  Speech,
-  WalletIcon,
-} from "lucide-react";
+import { Book, Group, Speech } from "lucide-react";
+import Image from "next/image";
 
 interface ServiceProps {
   title: string;
@@ -73,9 +67,10 @@ export const About = () => {
             ))}
           </div>
         </div>
-
-        <img
+        <Image
           src={"/students.svg"}
+          width={600}
+          height={600}
           className="w-[300px] md:w-[500px] lg:w-[600px] object-contain"
           alt="Students"
         />
