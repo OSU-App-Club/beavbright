@@ -9,7 +9,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "*"],
   })
 );
 
@@ -18,33 +18,4 @@ app.get("/users", async (c) => {
   return c.json(users);
 });
 
-app.get("/users/:id", async (c) => {
-  const user = await client.user.findUnique({
-    where: { id: Number(c.req.param("id")) },
-  });
-  return c.json(user);
-});
-
-app.post("/users", async (c) => {
-  const data = await c.req.json();
-  const user = await client.user.create({ data: data as User });
-  return c.json(user);
-});
-
-app.put("/users/:id", async (c) => {
-  const data = await c.req.json();
-  const user = await client.user.update({
-    where: { id: Number(c.req.param("id")) },
-    data: data as User,
-  });
-  return c.json(user);
-});
-
-app.delete("/users/:id", async (c) => {
-  const user = await client.user.delete({
-    where: { id: Number(c.req.param("id")) },
-  });
-  return c.json(user);
-});
-
-serve({ fetch: app.fetch });
+serve({ fetch: app.fetch, port: 3001 });
