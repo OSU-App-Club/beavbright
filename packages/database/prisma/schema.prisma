@@ -8,11 +8,33 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  status    String   @default("active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  pin       Int?
+  id          String        @id @default(cuid())
+  name        String
+  email       String        @unique
+  password    String
+  avatar      String
+  Discussions Discussions[]
+}
+
+model Discussions {
+  id          String  @id @default(cuid())
+  title       String
+  content     String
+  category    String
+  replies     Int
+  views       Int
+  poster      User    @relation(fields: [posterId], references: [id])
+  posterId    String
+  repliesList Reply[]
+}
+
+model Reply {
+  id           String      @id @default(cuid())
+  name         String
+  avatar       String
+  origin       String
+  content      String
+  date         String
+  discussion   Discussions @relation(fields: [discussionId], references: [id])
+  discussionId String
 }
