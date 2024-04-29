@@ -94,9 +94,9 @@ class CourseScraper {
   }
 
   private normalizeCourse(courseData: any): Course {
-    const professorName: string = courseData.faculty.find(
-      (instructor: any) => instructor.primaryIndicator
-    ).displayName;
+    const professorName: string =
+      courseData.faculty.find((instructor: any) => instructor.primaryIndicator)
+        ?.displayName || "";
 
     return {
       crn: courseData.courseReferenceNumber,
