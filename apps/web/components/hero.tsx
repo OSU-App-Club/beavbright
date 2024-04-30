@@ -48,7 +48,7 @@ export const Hero = () => {
         <img
           src="/study.svg"
           alt="hero"
-          className="w-full object-cover scale-150"
+          className="w-full object-cover scale-110 lg:scale-150"
         />
       </div>
       <div className="shadow"></div>

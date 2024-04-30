@@ -42,9 +42,7 @@ export function FAQ() {
     <section id="faq" className="container py-24 sm:py-32">
       <h2 className="text-3xl md:text-4xl font-bold mb-4">
         Frequently Asked{" "}
-        <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-          Questions
-        </span>
+        <span className="text-orange-600 font-bold">Questions</span>
       </h2>
 
       {FAQList.map(({ question, answer, value }: FAQProps) => (
@@ -66,7 +64,7 @@ export function FAQ() {
           href="https://osuapp.club"
           target="_blank"
           rel="noreferrer"
-          className="text-orange-500 hover:underline"
+          className="text-orange-600 hover:underline"
         >
           Contact us
         </a>

@@ -57,9 +57,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <TooltipProvider>
           <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
             <div className="border-b p-2">
-              <Button variant="outline" size="icon" aria-label="Home">
-                <BrainIcon size={24} />
-              </Button>
+              <a href="/">
+                <Button variant="outline" size="icon" aria-label="Home">
+                  <BrainIcon size={24} />
+                </Button>
+              </a>
             </div>
             <nav className="grid gap-1 p-2">
               {sidebarNavItems.slice(0, 4).map((item) => (

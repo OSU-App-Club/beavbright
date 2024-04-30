@@ -21,8 +21,8 @@ model Discussions {
   title       String
   content     String
   category    String
-  replies     Int
-  views       Int
+  replies     Int     @default(0)
+  views       Int     @default(0)
   poster      User    @relation(fields: [posterId], references: [id])
   posterId    String
   repliesList Reply[]
