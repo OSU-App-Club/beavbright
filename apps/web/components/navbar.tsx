@@ -29,18 +29,18 @@ import { SidebarNav } from "./nav-links";
 export function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <header className="sticky md:relative top-0 z-40 w-screen bg-transparent backdrop-blur-lg flex justify-between items-center p-8">
+    <header className="sticky md:relative top-0 z-40 ml-8 w-full bg-transparent backdrop-blur-lg flex justify-between items-center p-8 -mb-12 lg:mb-12">
       <NavigationMenu
         className={cn("flex justify-between items-center w-full max-w-full")}
       >
-        <div className="flex justify-start mx-8 md:mx-12">
+        <div className="flex justify-start md:mx-28">
           <Icons.logo className="text-orange-600 mt-1" />
           <a href="/" className="ml-1 font-bold text-xl flex">
             BeavBright
           </a>
         </div>
         {/* mobile */}
-        <div className="flex md:hidden">
+        <div className="flex justify-end md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger className="px-2" asChild>
               <Button variant="ghost" className={cn("self-end")}>
@@ -86,7 +86,7 @@ export function Navbar() {
             <a
               href={route.href}
               key={i}
-              className={`text-[17px] ${buttonVariants({
+              className={`text-xl ${buttonVariants({
                 variant: "ghost",
               })}`}
             >
@@ -98,7 +98,7 @@ export function Navbar() {
           <NavigationMenuItem className="flex items-center justify-end gap-2">
             <a
               href="/login"
-              className={`w-fit ${buttonVariants({
+              className={`w-fit text-xl ${buttonVariants({
                 variant: "ghost",
               })}`}
             >
@@ -106,7 +106,7 @@ export function Navbar() {
             </a>
             <a
               href="/register"
-              className={`w-fit ${buttonVariants({
+              className={`w-fit text-xl ${buttonVariants({
                 variant: "ghost",
               })}`}
             >
@@ -178,7 +178,9 @@ export default function PlatformNavbar({
 
             <SheetContent side={"left"}>
               <SheetHeader>
-                <SheetTitle className="font-bold text-xl">NextJudge</SheetTitle>
+                <SheetTitle className="font-bold text-xl">
+                  BeavBright
+                </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col justify-center items-center gap-2 mt-4">
                 {routeList.map(({ href, label }) => (

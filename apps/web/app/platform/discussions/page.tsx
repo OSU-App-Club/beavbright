@@ -3,6 +3,7 @@ import { categories, discussions } from "@/lib/constants";
 import { DiscussionCardProps } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Button } from "@ui/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -42,9 +43,16 @@ import { FilterIcon, SearchIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 
+import "@blocknote/core/fonts/inter.css";
+import { useCreateBlockNote } from "@blocknote/react";
+import "@blocknote/react/style.css";
+import "@ui/styles/globals.css";
+import { useTheme } from "next-themes";
+
 export default function DiscussionsPage() {
   const [filter, setFilter] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
+  const editor = useCreateBlockNote();
 
   const handleFilterChange = useCallback(
     (value: string[]) => {
@@ -79,6 +87,56 @@ export default function DiscussionsPage() {
   const searchFilteredDiscussions = useMemo(() => {
     return filteredDiscussions.filter(searchFilter);
   }, [search, filteredDiscussions]);
+
+  const { theme } = useTheme();
+  const currTheme = {
+    [`data-theme-${theme}`]: true,
+  };
+
+  const [title, setTitle] = useState<string>("");
+  const handleTitleChange = useCallback((value: string) => {
+    setTitle(value);
+  }, []);
+
+  const [category, setCategory] = useState<string>("");
+
+  const handleCategoryChange = useCallback((value: string) => {
+    setCategory(value);
+  }, []);
+
+  const [contentText, setContentText] = useState<string>("");
+  const handleContentTextChange = useCallback(() => {
+    setContentText(JSON.stringify(editor.document));
+  }, [editor.document]);
+
+  const [newDiscussions, setNewDiscussions] = useState<DiscussionCardProps[]>(
+    []
+  );
+
+  const addNewDiscussion = useCallback(
+    (discussion: DiscussionCardProps) => {
+      setNewDiscussions((prev) => [discussion, ...prev]);
+    },
+    [setNewDiscussions]
+  );
+
+  const createDiscussion = useCallback(async () => {
+    addNewDiscussion({
+      title,
+      content: contentText,
+      category,
+      replies: 0,
+      views: 0,
+      poster: {
+        name: "John Doe",
+        avatar: "https://randomuser.me/api/portraits",
+      },
+    });
+  }, [title, contentText, category, addNewDiscussion]);
+
+  const handleSubmit = useCallback(async () => {
+    await createDiscussion();
+  }, [createDiscussion]);
 
   return (
     <>
@@ -116,9 +174,9 @@ export default function DiscussionsPage() {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <div className="relative">
-                  <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <SearchIcon className="absolute left-3 top-3 h-4 w-4" />
                   <Input
-                    className="w-full bg-white shadow-none appearance-none pl-8 pr-4 py-2 text-sm rounded-md dark:bg-gray-950"
+                    className="w-full  shadow-none appearance-none pl-8 pr-4 py-2 text-sm rounded-md"
                     placeholder="Search discussions..."
                     type="search"
                     value={search}
@@ -148,17 +206,28 @@ export default function DiscussionsPage() {
                           className="col-span-3"
                           id="title"
                           placeholder="Enter a title"
+                          value={title}
+                          onChange={(e) => handleTitleChange(e.target.value)}
                         />
                       </div>
                       <div className="grid grid-cols-4 items-start gap-4">
                         <Label className="text-right" htmlFor="content">
                           Content
                         </Label>
-                        <div className="col-span-3">
+                        <div className="col-span-3 border-[1px] rounded-md focus:ring focus:ring-ring active:ring active:ring-ring">
+                          {/*
+                            For integrating BlockNoteView into the discussion form, we should use this:
+                          <BlockNoteView
+                            className="max-h-[200px] overflow-y-auto p-2 rounded-md"
+                            {...currTheme}
+                            editor={editor}
+                            onChange={handleContentTextChange}
+                          /> */}
                           <Textarea
-                            className="min-h-[200px]"
-                            id="content"
-                            placeholder="Write your discussion post..."
+                            className="w-full p-2 rounded-md"
+                            placeholder="Enter content"
+                            value={contentText}
+                            onChange={(e) => setContentText(e.target.value)}
                           />
                         </div>
                       </div>
@@ -166,7 +235,10 @@ export default function DiscussionsPage() {
                         <Label className="text-right" htmlFor="category">
                           Category
                         </Label>
-                        <Select>
+                        <Select
+                          value={category}
+                          onValueChange={handleCategoryChange}
+                        >
                           <SelectTrigger className={cn("w-max")}>
                             <SelectValue
                               className="w-max"
@@ -184,13 +256,18 @@ export default function DiscussionsPage() {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Post Discussion</Button>
+                      <Button type="submit" onClick={handleSubmit}>
+                        Post Discussion
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
               </div>
             </div>
             <div className="mt-4 space-y-4" />
+            {newDiscussions.map((discussion, index) => (
+              <DiscussionCard key={index} {...discussion} />
+            ))}
             <div className="mt-4 space-y-4">
               {searchFilteredDiscussions.map((discussion, index) => (
                 <DiscussionCard key={index} {...discussion} />
@@ -212,6 +289,7 @@ function DiscussionCard({
   poster,
 }: DiscussionCardProps) {
   const router = useRouter();
+
   return (
     <Card
       className={cn("hover:brightness-125 hover:cursor-pointer")}
@@ -235,6 +313,17 @@ function DiscussionCard({
         </div>
       </CardHeader>
       <CardContent>
+        {/*
+        For integrating BlockNoteView into each discussion card, we should use this:
+        <BlockNoteView
+          editor={editor}
+          data-theme-dark
+          aria-readonly="true"
+          defaultValue={content}
+          className="-mx-8"
+          editable={false}
+          contentEditable={false}
+        /> */}
         <h3 className="text-lg font-medium">{title}</h3>
         <p className="mt-2 text-gray-500 dark:text-gray-400">{content}</p>
       </CardContent>

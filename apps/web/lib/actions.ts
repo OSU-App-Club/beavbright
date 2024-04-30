@@ -1,8 +1,8 @@
 "use server";
 import prisma from "@/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
-import { encrypt } from "./session";
 import { cookies } from "next/headers";
+import { encrypt } from "./session";
 
 type LoginFields = {
   firstName: string;
@@ -40,7 +40,7 @@ export async function authorizeUser(email: string, password: string) {
   }
 
   const expires = new Date(Date.now() + 10 * 1000);
-  const session = await encrypt({ user, expires });
+  const session = await encrypt({ id: user.id, email: user.email }, expires);
 
   cookies().set("session", session, { expires, httpOnly: true });
 
