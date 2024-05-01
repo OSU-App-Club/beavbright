@@ -1,19 +1,19 @@
 {
-    "name": "database",
-    "license": "MIT",
-    "version": "0.0.0",
-    "main": "./index.ts",
-    "types": "./index.ts",
-    "scripts": {
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push --skip-generate",
-        "db:format": "prisma format",
-        "db:studio": "prisma studio"
-    },
-    "dependencies": {
-        "@prisma/client": "5.5.2"
-    },
-    "devDependencies": {
-        "prisma": "5.5.2"
-    }
+  "name": "database",
+  "license": "MIT",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate",
+    "db:format": "prisma format",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "5.5.2"
+  },
+  "devDependencies": {
+    "prisma": "5.5.2"
+  }
 }

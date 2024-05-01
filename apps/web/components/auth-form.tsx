@@ -54,7 +54,7 @@ export function RegisterForm() {
     } catch (error) {
       if (
         error.message.includes(
-          "Unique constraint failed on the fields: (`email`)"
+          "Unique constraint failed on the fields: (`email`)",
         )
       ) {
         setError("Account with this email already exists!");
@@ -69,7 +69,7 @@ export function RegisterForm() {
     <Card
       className={cn(
         "mx-auto max-w-sm shadow-md dark:border-[1px]",
-        "light:border-none"
+        "light:border-none",
       )}
     >
       <CardHeader>
@@ -203,7 +203,7 @@ export function LoginForm() {
     <Card
       className={cn(
         "mx-auto max-w-sm shadow-md dark:border-[1px]",
-        "light:border-none"
+        "light:border-none",
       )}
     >
       <CardHeader>

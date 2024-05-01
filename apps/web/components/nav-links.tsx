@@ -25,7 +25,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
     <nav
       className={cn(
         "flex flex-col justify-center items-center h-full rounded-md w-full backdrop-filter backdrop-blur-lg bg-opacity-10 gap-1 mt-1",
-        className
+        className,
       )}
       {...props}
     >
@@ -42,7 +42,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                     {
                       "bg-primary-foreground text-primary-background":
                         pathname === item.href,
-                    }
+                    },
                   )}
                 >
                   <div className="flex flex-col items-center justify-center text-center p-4">

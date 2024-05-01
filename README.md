@@ -50,9 +50,11 @@ pnpm ui:add <component-name>
 ### Docker
 
 Both the api (`api.Dockerfile`) and the web app (`web.Dockerfile`) are dockerized and managed by docker-compose (`docker-compose.yml`). You can start everything with:
+
 ```sh
 docker-compose watch
 ```
+
 This will start the api, the web app, and the database. It also enables hot reloading for both the api and the web app.
 
 ### Database
@@ -72,11 +74,9 @@ Currently, the monorepo contains the following packages and applications:
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-
 ## Credits
 
 Thank you to [dan5py](https://github.com/dan5py/turborepo-shadcn-ui) for the original template, allowing our club to build on top of it.
-
 
 ## License
 

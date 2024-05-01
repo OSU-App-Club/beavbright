@@ -35,7 +35,7 @@ class CourseScraper {
         headers: {
           "content-type": "application/x-www-form-urlencoded",
         },
-      }
+      },
     );
     return res.headers["set-cookie"]?.join("; ") || "";
   }
@@ -63,7 +63,7 @@ class CourseScraper {
           pageOffset: 0,
           pageMaxSize: pageMax,
           txt_term: term,
-        })
+        }),
       );
     }
     const results = await Promise.all(pool);
@@ -79,7 +79,7 @@ class CourseScraper {
 
   private async search(
     cookies: string,
-    params: SearchParams
+    params: SearchParams,
   ): Promise<SearchResult> {
     const res = await this.axiosInstance.get("searchResults/searchResults", {
       params: params,
@@ -88,7 +88,7 @@ class CourseScraper {
     return {
       totalCount: res.data.totalCount,
       courses: res.data.data.map((courseData: any) =>
-        this.normalizeCourse(courseData)
+        this.normalizeCourse(courseData),
       ),
     };
   }

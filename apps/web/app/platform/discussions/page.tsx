@@ -58,7 +58,7 @@ export default function DiscussionsPage() {
     (value: string[]) => {
       setFilter(value);
     },
-    [setFilter]
+    [setFilter],
   );
 
   const filteredDiscussions = useMemo(() => {
@@ -66,7 +66,7 @@ export default function DiscussionsPage() {
       return discussions;
     }
     return discussions.filter((discussion) =>
-      filter.includes(discussion.category)
+      filter.includes(discussion.category),
     );
   }, [filter]);
 
@@ -110,14 +110,14 @@ export default function DiscussionsPage() {
   }, [editor.document]);
 
   const [newDiscussions, setNewDiscussions] = useState<DiscussionCardProps[]>(
-    []
+    [],
   );
 
   const addNewDiscussion = useCallback(
     (discussion: DiscussionCardProps) => {
       setNewDiscussions((prev) => [discussion, ...prev]);
     },
-    [setNewDiscussions]
+    [setNewDiscussions],
   );
 
   const createDiscussion = useCallback(async () => {
@@ -164,7 +164,7 @@ export default function DiscussionsPage() {
                           handleFilterChange(
                             checked
                               ? [...filter, category]
-                              : filter.filter((item) => item !== category)
+                              : filter.filter((item) => item !== category),
                           );
                         }}
                       >

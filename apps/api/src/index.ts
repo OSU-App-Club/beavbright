@@ -10,7 +10,7 @@ app.use(
   "*",
   cors({
     origin: ["http://localhost:3000", "*"],
-  })
+  }),
 );
 
 app.get("/users", async (c) => {
