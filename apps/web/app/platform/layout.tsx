@@ -117,9 +117,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <ModeToggle />
               </div>
             </header>
-            <main className="flex-1 overflow-auto p-4">{children}</main>
           </div>
         </TooltipProvider>
+        <main className="flex-1 overflow-auto p-4">{children}</main>
       </div>
     </>
   );
