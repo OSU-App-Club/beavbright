@@ -1,0 +1,140 @@
+[
+  {
+    "schemaName": "public",
+    "tableName": "Discussions",
+    "predictions": [
+      {
+        "input": "public discussions category",
+        "column": "category",
+        "shape": "COMMERCE_DEPARTMENT",
+        "confidence": 0.5987564921379089,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public discussions content",
+        "column": "content",
+        "shape": "POST_BODY",
+        "confidence": 0.3619414865970612,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public discussions id",
+        "column": "id",
+        "shape": "UUID",
+        "confidence": 0.9983049631118774,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public discussions title",
+        "column": "title",
+        "shape": "POST_TITLE",
+        "confidence": 0.6008988618850708,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "Reply",
+    "predictions": [
+      {
+        "input": "public reply avatar",
+        "column": "avatar",
+        "shape": "INTERNET_AVATAR",
+        "confidence": 0.9922577142715454,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public reply content",
+        "column": "content",
+        "shape": "SYSTEM_MIME_TYPE",
+        "confidence": 0.4636513292789459,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public reply date",
+        "column": "date",
+        "shape": "DATE",
+        "confidence": 0.9976754784584045,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public reply id",
+        "column": "id",
+        "shape": "UUID",
+        "confidence": 0.9984690546989441,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public reply name",
+        "column": "name",
+        "shape": "PERSON_FULL_NAME",
+        "confidence": 0.4668536782264709,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public reply origin",
+        "column": "origin",
+        "shape": "STATUS",
+        "confidence": 0.481913149356842,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  },
+  {
+    "schemaName": "public",
+    "tableName": "User",
+    "predictions": [
+      {
+        "input": "public user avatar",
+        "column": "avatar",
+        "shape": "INTERNET_AVATAR",
+        "confidence": 0.9305407404899597,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public user email",
+        "column": "email",
+        "shape": "EMAIL",
+        "confidence": 0.99404376745224,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public user id",
+        "column": "id",
+        "shape": "UUID",
+        "confidence": 0.9964122176170349,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public user name",
+        "column": "name",
+        "shape": "USERNAME",
+        "confidence": 0.9706624150276184,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      },
+      {
+        "input": "public user password",
+        "column": "password",
+        "shape": "PASSWORD",
+        "confidence": 0.9340711236000061,
+        "context": "GENERAL",
+        "confidenceContext": 0
+      }
+    ]
+  }
+]
