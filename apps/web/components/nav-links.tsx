@@ -30,33 +30,31 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
       {...props}
     >
       {items.map((item) => (
-        <>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex flex-col items-center justify-center text-center rounded-md ml-6 hover:bg-primary-foreground hover:text-primary-background w-24 h-18",
-                    {
-                      "bg-primary-foreground text-primary-background":
-                        pathname === item.href,
-                    }
-                  )}
-                >
-                  <div className="flex flex-col items-center justify-center text-center p-4">
-                    <>{item.icon}</>
-                    <p className="hidden lg:block text-xs">{item.title}</p>
-                  </div>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <span>{item.title}</span>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </>
+        <TooltipProvider key={item.href}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex flex-col items-center justify-center text-center rounded-md ml-6 hover:bg-primary-foreground hover:text-primary-background w-24 h-18",
+                  {
+                    "bg-primary-foreground text-primary-background":
+                      pathname === item.href,
+                  }
+                )}
+              >
+                <div className="flex flex-col items-center justify-center text-center p-4">
+                  <>{item.icon}</>
+                  <p className="hidden lg:block text-xs">{item.title}</p>
+                </div>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <span>{item.title}</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ))}
     </nav>
   );
