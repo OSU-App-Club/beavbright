@@ -5,7 +5,7 @@ export const Hero = () => {
   return (
     <section
       id="home"
-      className="container grid lg:grid-cols-2 place-items-center py-20 md:py-32 gap-10"
+      className="container grid lg:grid-cols-2 place-items-center py-20 gap-10 max-w-7xl"
     >
       <div className="text-center lg:text-start space-y-6">
         <main className="text-5xl md:text-6xl font-bold">

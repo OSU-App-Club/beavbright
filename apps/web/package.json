@@ -16,6 +16,7 @@
         "@tanstack/react-table": "^8.10.7",
         "bcrypt-ts": "^5.0.2",
         "database": "workspace:*",
+        "framer-motion": "^11.1.7",
         "jose": "^5.2.4",
         "lucide-react": "0.289.0",
         "next": "^14.2.3",
