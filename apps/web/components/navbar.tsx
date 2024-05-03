@@ -26,14 +26,18 @@ import { BrainCog, Menu } from "lucide-react";
 import { sidebarNavItems } from "../app/platform/layout";
 import { SidebarNav } from "./nav-links";
 
-export function Navbar() {
+interface JWTPayload {
+  userId: string;
+  iat: number;
+  exp: number;
+}
+
+export function Navbar({ session }: { session: JWTPayload | null }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <header className="sticky md:relative top-0 z-40 ml-8 w-full bg-transparent backdrop-blur-lg flex justify-between items-center p-8 -mb-12 lg:mb-12">
-      <NavigationMenu
-        className={cn("flex justify-between items-center w-full max-w-full")}
-      >
-        <div className="flex justify-start md:mx-28">
+    <header className="sticky md:relative top-0 z-40 w-7/12 mx-auto bg-transparent backdrop-blur-lg flex justify-between items-center p-8">
+      <NavigationMenu className={cn("flex justify-between items-center")}>
+        <div className="flex justify-start">
           <Icons.logo className="text-orange-600 mt-1" />
           <a href="/" className="ml-1 font-bold text-xl flex">
             BeavBright
@@ -81,7 +85,7 @@ export function Navbar() {
           </Sheet>
         </div>
         {/* desktop */}
-        <NavigationMenuList className="hidden md:flex justify-center items-center w-full">
+        <NavigationMenuList className="hidden md:flex justify-center items-center w-full mx-12">
           {routeList.map((route, i) => (
             <a
               href={route.href}
@@ -96,22 +100,46 @@ export function Navbar() {
         </NavigationMenuList>
         <div className="hidden md:flex justify-end mx-12">
           <NavigationMenuItem className="flex items-center justify-end gap-2">
-            <a
-              href="/login"
-              className={`w-fit text-xl ${buttonVariants({
-                variant: "ghost",
-              })}`}
-            >
-              Login
-            </a>
-            <a
-              href="/register"
-              className={`w-fit text-xl ${buttonVariants({
-                variant: "ghost",
-              })}`}
-            >
-              Register
-            </a>
+            {session.userId ? (
+              <>
+                <a
+                  href="/platform"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Dashboard
+                </a>
+                <a
+                  href="/logout"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Logout
+                </a>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/login"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Login
+                </a>
+                <a
+                  href="/register"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Register
+                </a>
+              </>
+            )}
+
             <ModeToggle />
           </NavigationMenuItem>
         </div>

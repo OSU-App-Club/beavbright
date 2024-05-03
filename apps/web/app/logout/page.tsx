@@ -1,11 +1,7 @@
-export default function LogoutPage() {
+export default async function LogoutPage() {
   return (
     <>
-      <main className="flex flex-row justify-center items-center">
-        <h1 className="text-4xl text-center w-full">
-          Thank you for using BeavBright!
-        </h1>
-      </main>
+      <h1>Logging out...</h1>
     </>
   );
 }
