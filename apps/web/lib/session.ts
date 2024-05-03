@@ -1,7 +1,10 @@
-import { SignJWT, jwtVerify } from "jose";
-import { NextRequest, NextResponse } from "next/server";
+import { JWTPayload, SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
+import "server-only";
 
 const secretKey = process.env.JWT_SECRET;
+// You can also use a random string as a secret key
+if (!secretKey) throw new Error("No JWT secret found");
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any, expiresIn: Date) {
@@ -12,55 +15,41 @@ export async function encrypt(payload: any, expiresIn: Date) {
     .sign(key);
 }
 
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-
-  if (payload.exp * 1000 < Date.now()) {
-    throw new Error("Session expired");
+export async function decrypt(token: string): Promise<JWTPayload> {
+  try {
+    // Decrypt the token and return the payload
+    const { payload } = await jwtVerify(token, key, {
+      algorithms: ["HS256"],
+    });
+    return payload;
+  } catch (error: any) {
+    return error;
   }
-
-  return payload;
 }
 
-export async function refreshSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) {
-    return;
-  }
-
-  const sessionDetails = await decrypt(session);
-
-  sessionDetails.expiryDate = new Date(Date.now() + 60 * 1000);
-}
-
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) return;
-
-  const parsed = await decrypt(session);
-
-  parsed.expires = new Date(Date.now() + 30 * 60 * 1000);
-
-  const res = NextResponse.next();
-
-  res.cookies.set({
-    name: "session",
-    value: await encrypt(parsed, parsed.expires),
+export async function createSession(userId: string) {
+  // 7 days
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+  // Encrypt the user ID and set it as a cookie
+  const session = await encrypt({ userId }, expiresAt);
+  cookies().set("session", session, {
     httpOnly: true,
     secure: true,
-    expires: parsed.expires,
+    expires: expiresAt,
+    sameSite: "lax",
+    path: "/",
   });
-  return res;
 }
 
-export async function getSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) return null;
-  return await decrypt(session);
-}
-
-export async function logout(response: NextResponse) {
-  response.cookies.set("session", "", { expires: new Date(0) });
+export async function getSession(): Promise<JWTPayload | Error> {
+  try {
+    // Get the session cookies
+    const session = cookies().get("session")?.value;
+    if (!session) {
+      throw new Error("No session found");
+    }
+    return await decrypt(session);
+  } catch (error: any) {
+    return error;
+  }
 }

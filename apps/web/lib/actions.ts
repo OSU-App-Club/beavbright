@@ -1,8 +1,9 @@
 "use server";
+
 import prisma from "@/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { cookies } from "next/headers";
-import { encrypt } from "./session";
+import { createSession } from "./session";
 
 type LoginFields = {
   firstName: string;
@@ -39,10 +40,7 @@ export async function authorizeUser(email: string, password: string) {
     throw new Error("Incorrect email or password");
   }
 
-  const expires = new Date(Date.now() + 10 * 1000);
-  const session = await encrypt({ id: user.id, email: user.email }, expires);
-
-  cookies().set("session", session, { expires, httpOnly: true });
+  await createSession(user.id);
 
   return { success: true };
 }

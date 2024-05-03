@@ -4,12 +4,14 @@ import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { Navbar } from "@/components/navbar";
 import { ScrollToTop } from "@/components/scrollToTop";
+import { getSession } from "@/lib/session";
 
 export default async function Page() {
+  const session = await getSession();
   return (
     <>
       <main className="flex flex-col items-center">
-        <Navbar />
+        <Navbar session={JSON.parse(JSON.stringify(session))} />
         <Hero />
         <div className="mt-24">
           <About />
