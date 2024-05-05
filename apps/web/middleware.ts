@@ -14,6 +14,15 @@ const protectedRoutes = [
 export default async function middleware(request: NextRequest) {
   const session = await getSession();
 
+  if (request.nextUrl.pathname.startsWith("/platform/discussions/")) {
+    const discussionId = request.nextUrl.pathname.split("/").pop();
+    return NextResponse.next({
+      headers: {
+        discussionId,
+      },
+    });
+  }
+
   if (request.nextUrl.pathname === "/logout") {
     const absoluteURL = new URL("/", request.nextUrl.origin);
     return new Response(null, {

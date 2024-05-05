@@ -1,7 +1,35 @@
 "use client";
+import { DiscussionCardProps } from "@/lib/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
+import { Button } from "@ui/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@ui/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@ui/components/ui/dropdown-menu";
+import { Input } from "@ui/components/ui/input";
+import { Label } from "@ui/components/ui/label";
+import { Separator } from "@ui/components/ui/separator";
+import { cn } from "@ui/lib/utils";
+import { useRouter } from "next/navigation";
+
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/react/style.css";
+import "@ui/styles/globals.css";
 import {
   Bird,
   CornerDownLeft,
+  EyeIcon,
+  MessageCircleIcon,
   Mic,
   Paperclip,
   Rabbit,
@@ -15,27 +43,9 @@ import {
   EnterIcon,
   PlusIcon,
 } from "@radix-ui/react-icons";
-import { Button } from "@ui/components/ui/button";
-import { Card } from "@ui/components/ui/card";
-import { Input } from "@ui/components/ui/input";
-import { Label } from "@ui/components/ui/label";
 
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@ui/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@ui/components/ui/dropdown-menu";
-import { Separator } from "@ui/components/ui/separator";
+import { CardDescription, CardTitle } from "@ui/components/ui/card";
+import { DropdownMenuItem } from "@ui/components/ui/dropdown-menu";
 
 export function Access() {
   return (
@@ -234,6 +244,61 @@ function CourseCard() {
           <div>Spring 2022</div>
         </div>
       </CardContent>
+    </Card>
+  );
+}
+
+export function DiscussionCard({ discussion }: DiscussionCardProps) {
+  const router = useRouter();
+  const name = discussion.poster.firstName + " " + discussion.poster.lastName;
+  return (
+    <Card
+      className={cn("hover:brightness-125 hover:cursor-pointer")}
+      onClick={() => router.push(`/platform/discussions/${discussion.id}`)}
+    >
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage alt={name} src={discussion.poster.avatar} />
+            {/* initials */}
+            <AvatarFallback>
+              {name.charAt(0) + name.split(" ")[1].charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{name}</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {discussion.category}
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {/*
+        For integrating BlockNoteView into each discussion card, we should use this:
+        <BlockNoteView
+          editor={editor}
+          data-theme-dark
+          aria-readonly="true"
+          defaultValue={content}
+          className="-mx-8"
+          editable={false}
+          contentEditable={false}
+        /> */}
+        <h3 className="text-lg font-medium">{discussion.title}</h3>
+        <p className="mt-2 text-gray-500 dark:text-gray-400">
+          {discussion.content}
+        </p>
+      </CardContent>
+      <CardFooter>
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <MessageCircleIcon className="h-4 w-4" />
+          <span>{discussion.replies} replies</span>
+          <Separator className="h-4" orientation="vertical" />
+          <EyeIcon className="h-4 w-4" />
+          <span>{discussion.views} views</span>
+        </div>
+      </CardFooter>
     </Card>
   );
 }
