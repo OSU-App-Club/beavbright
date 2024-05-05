@@ -1,6 +1,6 @@
-import { getAllDiscussionCategories, getDicussions } from "@/lib/actions";
-import { getSession } from "@/lib/session";
-import { Discussion } from "@/lib/types";
+import { getAllDiscussionCategories, getDicussions } from "@/app/lib/actions";
+import { getSession } from "@/app/lib/session";
+import { Discussion } from "@/app/lib/types";
 import View from "./view";
 
 export const dyanmic = "force-dynamic";

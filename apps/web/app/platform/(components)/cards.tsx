@@ -1,5 +1,5 @@
 "use client";
-import { DiscussionCardProps } from "@/lib/types";
+import { DiscussionCardProps } from "@/app/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Button } from "@ui/components/ui/button";
 import {
@@ -19,7 +19,6 @@ import {
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import { Separator } from "@ui/components/ui/separator";
-import { cn } from "@ui/lib/utils";
 import { useRouter } from "next/navigation";
 
 import "@blocknote/core/fonts/inter.css";
@@ -31,6 +30,7 @@ import {
   EyeIcon,
   MessageCircleIcon,
   Mic,
+  MoreVertical,
   Paperclip,
   Rabbit,
   UserIcon,
@@ -44,8 +44,18 @@ import {
   PlusIcon,
 } from "@radix-ui/react-icons";
 
+import { deleteDiscussison, editDiscussion } from "@/app/lib/actions";
 import { CardDescription, CardTitle } from "@ui/components/ui/card";
 import { DropdownMenuItem } from "@ui/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@ui/components/ui/select";
+import { cn } from "@ui/lib/utils";
+import { useState } from "react";
 
 export function Access() {
   return (
@@ -248,14 +258,31 @@ function CourseCard() {
   );
 }
 
-export function DiscussionCard({ discussion }: DiscussionCardProps) {
+export function DiscussionCard({
+  discussion,
+  session,
+  categories,
+}: DiscussionCardProps) {
   const router = useRouter();
+  const [isEditing, setisEditing] = useState(false);
+  const [newContent, setNewContent] = useState(discussion.content);
+  const [newTitle, setNewTitle] = useState(discussion.title);
+  const [newCategory, setNewCategory] = useState(discussion.category);
   const name = discussion.poster.firstName + " " + discussion.poster.lastName;
+  const onSubmitTrash = async () => {
+    await deleteDiscussison(discussion.id);
+  };
+
+  const onSubmitEdit = async () => {
+    await editDiscussion(discussion.id, {
+      title: newTitle,
+      content: newContent,
+      category: newCategory,
+    });
+    setisEditing(false);
+  };
   return (
-    <Card
-      className={cn("hover:brightness-125 hover:cursor-pointer")}
-      onClick={() => router.push(`/platform/discussions/${discussion.id}`)}
-    >
+    <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
@@ -271,6 +298,45 @@ export function DiscussionCard({ discussion }: DiscussionCardProps) {
               {discussion.category}
             </div>
           </div>
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 gap-1"
+              onClick={() =>
+                router.push(`/platform/discussions/${discussion.id}`)
+              }
+            >
+              <EyeIcon className="h-3.5 w-3.5" />
+              <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                View Post
+              </span>
+            </Button>
+            {discussion.poster.id === session.userId && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="outline" className="h-8 w-8">
+                    <MoreVertical className="h-3.5 w-3.5" />
+                    <span className="sr-only">More</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setisEditing(true);
+                    }}
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Anonoymize</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={onSubmitTrash}>
+                    Trash
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -285,10 +351,53 @@ export function DiscussionCard({ discussion }: DiscussionCardProps) {
           editable={false}
           contentEditable={false}
         /> */}
-        <h3 className="text-lg font-medium">{discussion.title}</h3>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
-          {discussion.content}
-        </p>
+        {isEditing ? (
+          <form className="flex flex-col gap-4 w-64">
+            <Label htmlFor="category">Category</Label>
+            <Select value={newCategory} onValueChange={setNewCategory}>
+              <SelectTrigger className={cn("w-max")}>
+                <SelectValue
+                  className="w-max"
+                  placeholder="Select a category"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category, index) => (
+                  <SelectItem key={index} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+            <Label htmlFor="content">Content</Label>
+            <Input
+              value={newContent}
+              onChange={(e) => setNewContent(e.target.value)}
+            />
+            <Button
+              type="submit"
+              className="w-20"
+              onClick={(e) => {
+                e.preventDefault();
+                onSubmitEdit();
+              }}
+            >
+              Save
+            </Button>
+          </form>
+        ) : (
+          <>
+            <h3 className="text-lg font-medium">{discussion.title}</h3>
+            <p className="mt-2 text-gray-500 dark:text-gray-400">
+              {discussion.content}
+            </p>
+          </>
+        )}
       </CardContent>
       <CardFooter>
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">

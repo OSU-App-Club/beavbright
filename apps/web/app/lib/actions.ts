@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
 import { createSession } from "./session";
@@ -97,4 +97,25 @@ export async function createNewDiscussion(data: {
   });
   revalidatePath("/platform/discussions");
   return discussion;
+}
+
+export async function deleteDiscussison(id: string) {
+  await prisma.discussions.delete({ where: { id } });
+  revalidatePath("/platform/discussions");
+}
+
+export async function editDiscussion(
+  id: string,
+  data: { title: string; content: string; category: string }
+) {
+  await prisma.discussions.update({
+    where: { id },
+    data,
+  });
+  revalidatePath("/platform/discussions");
+}
+
+export async function getUserById(id: string) {
+  const user = await prisma.user.findUnique({ where: { id } });
+  return user;
 }

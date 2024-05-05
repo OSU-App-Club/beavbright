@@ -20,7 +20,15 @@ export interface Discussion {
 
 export interface DiscussionCardProps {
   discussion: Discussion;
+  session: SessionObject;
+  categories: string[];
 }
+
+type SessionObject = {
+  userId: string;
+  exp: number;
+};
+
 export interface DiscussionReplyProps {
   name: string;
   avatar: string;

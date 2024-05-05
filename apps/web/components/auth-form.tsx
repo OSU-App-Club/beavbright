@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { authorizeUser, createUser } from "@/lib/actions";
+import { authorizeUser, createUser } from "@/app/lib/actions";
 import { Button } from "@ui/components/ui/button";
 import {
   Card,

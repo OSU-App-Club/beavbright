@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import "server-only";
 
 const secretKey = process.env.JWT_SECRET;
-// You can also use a random string as a secret key
+// We can also use a random string as a secret key
 if (!secretKey) throw new Error("No JWT secret found");
 const key = new TextEncoder().encode(secretKey);
 
