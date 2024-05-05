@@ -1,4 +1,5 @@
-import { breadcrumbs, replies } from "@/lib/constants";
+import { getDiscussionDetails } from "@/lib/actions";
+import { replies } from "@/lib/constants";
 import { SlashIcon } from "@radix-ui/react-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Blockquote } from "@ui/components/ui/blockquote";
@@ -33,13 +34,27 @@ import {
   EyeIcon,
   MessageCircleIcon,
 } from "lucide-react";
+import { headers } from "next/headers";
 import Link from "next/link";
 import {
   DiscussionOpenerProps,
   DiscussionReplyProps,
 } from "../../../../lib/types";
 
-export default function Component() {
+export default async function Component() {
+  const headersObj = headers();
+  const discussionDetails = await getDiscussionDetails(
+    headersObj.get("discussionId")
+  );
+
+  const breadcrumbs = [
+    { href: "/platform", label: "Home" },
+    { href: "/platform/discussions", label: "Discussions" },
+    {
+      href: `/platform/discussions/${discussionDetails.id}`,
+      label: discussionDetails.title,
+    },
+  ];
   return (
     <>
       <div>
@@ -58,12 +73,16 @@ export default function Component() {
           </div>
           <section>
             <DiscussionOpener
-              name="John Doe"
-              avatar="/placeholder-avatar.jpg"
-              content="Anyone have tips for acing the CS 161 final?"
-              category="Computer Science"
-              replies={12}
-              views={325}
+              name={
+                discussionDetails.poster.firstName +
+                " " +
+                discussionDetails.poster.lastName
+              }
+              avatar={discussionDetails.poster.avatar}
+              content={discussionDetails.content}
+              category={discussionDetails.category}
+              replies={discussionDetails.replies}
+              views={discussionDetails.views}
             />
             <div className="mt-8 space-y-4">
               {replies.map((reply, index) => (
