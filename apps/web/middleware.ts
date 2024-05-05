@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getSession } from "./lib/session";
+import { getSession } from "./app/lib/session";
 
 const unprotectedRoutes = ["/", "/login", "/register"];
 const protectedRoutes = [

@@ -1,5 +1,5 @@
 "use client";
-import { Discussion } from "@/lib/types";
+import { Discussion } from "@/app/lib/types";
 import { Button } from "@ui/components/ui/button";
 import {
   Dialog,
@@ -32,7 +32,7 @@ import { cn } from "@ui/lib/utils";
 import { FilterIcon, SearchIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import { createNewDiscussion } from "@/lib/actions";
+import { createNewDiscussion } from "@/app/lib/actions";
 import "@blocknote/core/fonts/inter.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/react/style.css";
@@ -119,7 +119,10 @@ export default function View({
         category,
         userId: session.userId,
       });
-      setDiscussions((prev) => [newDiscussion as Discussion, ...prev]);
+      setDiscussions((prev) => [
+        newDiscussion as unknown as Discussion,
+        ...prev,
+      ]);
     },
     [title, contentText, category]
   );
@@ -230,11 +233,15 @@ export default function View({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories.map((category, index) => (
-                            <SelectItem key={index} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
+                          {categories &&
+                            categories.map((category, index) => (
+                              <SelectItem
+                                key={index}
+                                value={category ? category : "ALL"}
+                              >
+                                {category}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -249,7 +256,12 @@ export default function View({
         </div>
         <div className="mt-4 space-y-4">
           {searchFilteredDiscussions.map((discussion, index) => (
-            <DiscussionCard key={index} discussion={discussion} />
+            <DiscussionCard
+              key={index}
+              discussion={discussion}
+              session={session}
+              categories={categories}
+            />
           ))}
         </div>
       </section>

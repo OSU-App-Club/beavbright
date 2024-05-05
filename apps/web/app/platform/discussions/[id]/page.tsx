@@ -1,5 +1,5 @@
-import { getDiscussionDetails } from "@/lib/actions";
-import { replies } from "@/lib/constants";
+import { getDiscussionDetails } from "@/app/lib/actions";
+import { replies } from "@/app/lib/constants";
 import { SlashIcon } from "@radix-ui/react-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Blockquote } from "@ui/components/ui/blockquote";
@@ -39,7 +39,7 @@ import Link from "next/link";
 import {
   DiscussionOpenerProps,
   DiscussionReplyProps,
-} from "../../../../lib/types";
+} from "../../../lib/types";
 
 export default async function Component() {
   const headersObj = headers();

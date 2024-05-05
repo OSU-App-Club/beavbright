@@ -14,7 +14,7 @@ import {
 } from "@ui/components/ui/sheet";
 import { useState } from "react";
 
-import { routeList } from "@/lib/constants";
+import { routeList } from "@/app/lib/constants";
 import { Button } from "@ui/components/ui/button";
 
 import { Icons } from "@/components/icons";

@@ -51,7 +51,11 @@ export const sidebarNavItems = [
   },
 ];
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <div className="grid h-full w-full pl-[53px]">
