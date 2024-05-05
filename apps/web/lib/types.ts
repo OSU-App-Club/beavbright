@@ -1,17 +1,26 @@
 export interface User {
-  name: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
   avatar: string;
 }
 
-export interface DiscussionCardProps {
+export interface Discussion {
+  id: string;
   title: string;
   content: string;
   category: string;
   replies: number;
   views: number;
+  posterId: string;
   poster: User;
 }
 
+export interface DiscussionCardProps {
+  discussion: Discussion;
+}
 export interface DiscussionReplyProps {
   name: string;
   avatar: string;
