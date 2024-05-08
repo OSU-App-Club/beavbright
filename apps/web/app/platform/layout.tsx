@@ -17,39 +17,7 @@ import {
   TooltipTrigger,
 } from "@ui/components/ui/tooltip";
 import Link from "next/link";
-
-export const sidebarNavItems = [
-  {
-    title: "Home",
-    href: "/platform",
-    icon: <HomeIcon size={24} />,
-  },
-  {
-    title: "Study Groups",
-    href: "/platform/study-groups",
-    icon: <Users size={24} />,
-  },
-  {
-    title: "Discussions",
-    href: "/platform/discussions",
-    icon: <ListIcon size={24} />,
-  },
-  {
-    title: "Course Materials",
-    href: "/platform/course-materials",
-    icon: <BookIcon size={24} />,
-  },
-  {
-    title: "Profile",
-    href: "/platform/profile",
-    icon: <User2Icon size={24} />,
-  },
-  {
-    title: "Sign Out",
-    href: "/logout",
-    icon: <LogOutIcon size={24} />,
-  },
-];
+import { sidebarNavItems } from "../lib/constants";
 
 export default async function Layout({
   children,
