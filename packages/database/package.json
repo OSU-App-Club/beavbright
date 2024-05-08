@@ -8,7 +8,7 @@
         "db:generate": "prisma generate",
         "db:push": "prisma db push --skip-generate",
         "db:format": "prisma format",
-        "db:init": "pnpm install && prisma generate && prisma db push --skip-generate && pnpm run db:seed && primsa studio",
+        "db:init": "pnpm install && prisma generate && prisma db push --skip-generate && pnpm run db:seed && prisma studio",
         "db:prod": "prisma migrate deploy",
         "db:studio": "prisma studio",
         "db:migrate": "prisma migrate dev",
