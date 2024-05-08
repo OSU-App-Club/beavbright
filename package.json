@@ -16,6 +16,7 @@
         "eslint": "^7.32.0",
         "eslint-config-custom": "workspace:*",
         "prettier": "^2.5.1",
+        "prisma": "5.5.2",
         "turbo": "latest"
     },
     "packageManager": "pnpm@9.1.0"
