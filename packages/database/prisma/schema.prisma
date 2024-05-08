@@ -8,33 +8,38 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  name        String
-  email       String        @unique
-  password    String
-  avatar      String
-  Discussions Discussions[]
+    id          String        @id @default(cuid())
+    firstName   String
+    lastName    String
+    email       String        @unique
+    password    String
+    avatar      String
+    discussions Discussion[]
+    createdAt   DateTime      @default(now())
+    lastLogin   DateTime?
 }
 
-model Discussions {
-  id          String  @id @default(cuid())
-  title       String
-  content     String
-  category    String
-  replies     Int     @default(0)
-  views       Int     @default(0)
-  poster      User    @relation(fields: [posterId], references: [id])
-  posterId    String
-  repliesList Reply[]
+model Discussion {
+    id          String   @id @default(cuid())
+    title       String
+    content     String
+    category    String
+    replies     Int      @default(0)
+    views       Int      @default(0)
+    poster      User     @relation(fields: [posterId], references: [id])
+    posterId    String
+    repliesList Reply[]
+    createdAt   DateTime @default(now())
 }
 
 model Reply {
-  id           String      @id @default(cuid())
-  name         String
-  avatar       String
-  origin       String
-  content      String
-  date         String
-  discussion   Discussions @relation(fields: [discussionId], references: [id])
-  discussionId String
+    id           String      @id @default(cuid())
+    name         String
+    avatar       String
+    origin       String
+    content      String
+    date         DateTime
+    discussion   Discussion @relation(fields: [discussionId], references: [id])
+    discussionId String      @map("discussionId")
+    createdAt    DateTime    @default(now())
 }

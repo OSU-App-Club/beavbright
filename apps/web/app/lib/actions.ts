@@ -46,7 +46,8 @@ export async function authorizeUser(email: string, password: string) {
 }
 
 export async function getDicussions() {
-  const discussions = await prisma.discussions.findMany({
+
+  const discussions = await prisma.discussion.findMany({
     include: {
       poster: true,
     },
@@ -55,19 +56,35 @@ export async function getDicussions() {
 }
 
 export async function getAllDiscussionCategories() {
-  const categories = await prisma.discussions.findMany({
+  const categories = await prisma.discussion.findMany({
     select: {
       category: true,
     },
   });
 
+  const defaultCategories = [
+    "General",
+    "Computer Science",
+    "Study Groups",
+    "Math",
+    "Physics",
+    "Biology",
+    "Chemistry",
+    "Business",
+    "Engineering",
+    "Health",
+    "Humanities",
+    "Social Sciences",
+    "Events",
+  ];
+
   const uniqueCategories = new Set(categories.map((c) => c.category));
 
-  return Array.from(uniqueCategories);
+  return Array.from(uniqueCategories).concat(defaultCategories);
 }
 
 export async function getDiscussionDetails(id: string) {
-  const discussion = await prisma.discussions.findUnique({
+  const discussion = await prisma.discussion.findUnique({
     where: { id },
     include: {
       poster: true,
@@ -83,7 +100,7 @@ export async function createNewDiscussion(data: {
   category: string;
   userId: string;
 }) {
-  const discussion = await prisma.discussions.create({
+  const discussion = await prisma.discussion.create({
     data: {
       title: data.title,
       content: data.content,
@@ -100,7 +117,7 @@ export async function createNewDiscussion(data: {
 }
 
 export async function deleteDiscussison(id: string) {
-  await prisma.discussions.delete({ where: { id } });
+  await prisma.discussion.delete({ where: { id } });
   revalidatePath("/platform/discussions");
 }
 
@@ -108,7 +125,7 @@ export async function editDiscussion(
   id: string,
   data: { title: string; content: string; category: string }
 ) {
-  await prisma.discussions.update({
+  await prisma.discussion.update({
     where: { id },
     data,
   });
