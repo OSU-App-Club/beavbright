@@ -14,7 +14,7 @@ import {
 } from "@ui/components/ui/sheet";
 import { useState } from "react";
 
-import { routeList } from "@/app/lib/constants";
+import { routeList, sidebarNavItems } from "@/app/lib/constants";
 import { Button } from "@ui/components/ui/button";
 
 import { Icons } from "@/components/icons";
@@ -23,7 +23,6 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "@ui/components/ui/button";
 import { cn } from "@ui/lib/utils";
 import { BrainCog, Menu } from "lucide-react";
-import { sidebarNavItems } from "../app/platform/layout";
 import { SidebarNav } from "./nav-links";
 
 interface JWTPayload {
@@ -35,8 +34,8 @@ interface JWTPayload {
 export function Navbar({ session }: { session: JWTPayload | null }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <header className="sticky md:relative top-0 z-40 w-7/12 mx-auto bg-transparent backdrop-blur-lg flex justify-between items-center p-8">
-      <NavigationMenu className={cn("flex justify-between items-center")}>
+    <header className="sticky md:relative top-0 z-40 bg-transparent backdrop-blur-lg flex justify-center items-center p-8">
+      <NavigationMenu>
         <div className="flex justify-start">
           <Icons.logo className="text-orange-600 mt-1" />
           <a href="/" className="ml-1 font-bold text-xl flex">

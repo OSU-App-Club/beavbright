@@ -1,11 +1,12 @@
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Button, buttonVariants } from "@ui/components/ui/button";
+import Image from "next/image";
 
 export const Hero = () => {
   return (
     <section
       id="home"
-      className="container grid lg:grid-cols-2 place-items-center py-20 gap-10 max-w-7xl"
+      className="container grid lg:grid-cols-2 place-items-center py-28 max-w-7xl"
     >
       <div className="text-center lg:text-start space-y-6">
         <main className="text-5xl md:text-6xl font-bold">
@@ -25,8 +26,9 @@ export const Hero = () => {
         </main>
 
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
-          Discover a vibrant community of OSU students, share resources, and
-          collaborate on your academic journey.
+          The Chegg alternative of the future. Discover curated resources,
+          collaborate with peers, and succeed in your academic journey at Oregon
+          State University.
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
@@ -45,10 +47,12 @@ export const Hero = () => {
         </div>
       </div>
       <div className="z-10 mt-12 lg:mt-0">
-        <img
+        <Image
           src="/study.svg"
           alt="hero"
           className="w-full object-cover scale-110 lg:scale-150"
+          width={500}
+          height={500}
         />
       </div>
       <div className="shadow"></div>

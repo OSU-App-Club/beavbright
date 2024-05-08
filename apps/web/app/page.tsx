@@ -10,7 +10,7 @@ export default async function Page() {
   const session = await getSession();
   return (
     <>
-      <main className="flex flex-col items-center">
+      <main>
         <Navbar session={JSON.parse(JSON.stringify(session))} />
         <Hero />
         <div className="mt-24">
