@@ -4,13 +4,7 @@ import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
 import { createSession } from "./session";
-
-type LoginFields = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
+import { CreateReplyFields, LoginFields } from "./types";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -46,10 +40,12 @@ export async function authorizeUser(email: string, password: string) {
 }
 
 export async function getDicussions() {
-
   const discussions = await prisma.discussion.findMany({
     include: {
       poster: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return discussions;
@@ -78,9 +74,12 @@ export async function getAllDiscussionCategories() {
     "Events",
   ];
 
-  const uniqueCategories = new Set(categories.map((c) => c.category));
+  const uniqueCategories = Array.from(
+    new Set(categories.map((category) => category.category))
+  ).filter((category) => category !== "");
 
-  return Array.from(uniqueCategories).concat(defaultCategories);
+  const allCategories = [...defaultCategories, ...uniqueCategories];
+  return allCategories;
 }
 
 export async function getDiscussionDetails(id: string) {
@@ -90,26 +89,128 @@ export async function getDiscussionDetails(id: string) {
       poster: true,
     },
   });
-
   return discussion;
+}
+
+export async function getDiscussionReplies(id: string) {
+  const replies = await prisma.reply.findMany({
+    where: {
+      discussionId: id,
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  return replies;
+}
+
+export async function createNewReply(data: CreateReplyFields) {
+  const reply = await prisma.reply.create({
+    data: {
+      body: data.body,
+      discussion: {
+        connect: {
+          id: data.discussionId,
+        },
+      },
+      poster: {
+        connect: {
+          id: data.posterId,
+        },
+      },
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+  });
+
+  await prisma.discussion.update({
+    where: { id: data.discussionId },
+    data: {
+      replies: {
+        increment: 1,
+      },
+    },
+  });
+
+  revalidatePath(`/platform/discussions/${data.discussionId}`);
+  return reply;
+}
+
+// We'll need this for "Reply to a reply" feature (WIP)
+export async function createChildReply(data: CreateReplyFields) {
+  const reply = await prisma.reply.create({
+    data: {
+      body: data.body,
+      discussion: {
+        connect: {
+          id: data.discussionId,
+        },
+      },
+      poster: {
+        connect: {
+          id: data.posterId,
+        },
+      },
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+  });
+
+  await prisma.discussion.update({
+    where: { id: data.discussionId },
+    data: {
+      replies: {
+        increment: 1,
+      },
+    },
+  });
+
+  revalidatePath(`/platform/discussions/${data.discussionId}`);
+  return reply;
+}
+
+export async function deleteDiscussionReply(id: string) {
+  const dicussionId = (await prisma.reply.findUnique({ where: { id } }))
+    .discussionId;
+  await prisma.reply.delete({ where: { id } });
+  await prisma.discussion.update({
+    where: { id: dicussionId },
+    data: {
+      replies: {
+        decrement: 1,
+      },
+    },
+  });
+  revalidatePath(`/platform/discussions/${dicussionId}`);
 }
 
 export async function createNewDiscussion(data: {
   title: string;
-  content: string;
+  body: string;
   category: string;
   userId: string;
 }) {
   const discussion = await prisma.discussion.create({
     data: {
       title: data.title,
-      content: data.content,
+      body: data.body,
       category: data.category,
       poster: {
         connect: {
           id: data.userId,
         },
       },
+    },
+    include: {
+      poster: true,
     },
   });
   revalidatePath("/platform/discussions");
@@ -123,11 +224,15 @@ export async function deleteDiscussison(id: string) {
 
 export async function editDiscussion(
   id: string,
-  data: { title: string; content: string; category: string }
+  data: { title: string; body: string; category: string }
 ) {
   await prisma.discussion.update({
     where: { id },
-    data,
+    data: {
+      title: data.title,
+      body: data.body,
+      category: data.category,
+    },
   });
   revalidatePath("/platform/discussions");
 }
@@ -135,4 +240,16 @@ export async function editDiscussion(
 export async function getUserById(id: string) {
   const user = await prisma.user.findUnique({ where: { id } });
   return user;
+}
+
+export async function viewDiscussionPost(id: string) {
+  await prisma.discussion.update({
+    where: { id },
+    data: {
+      views: {
+        increment: 1,
+      },
+    },
+  });
+  revalidatePath(`/platform/discussions/${id}`);
 }

@@ -32,15 +32,23 @@ import { cn } from "@ui/lib/utils";
 import { FilterIcon, SearchIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-import { createNewDiscussion } from "@/app/lib/actions";
+import {
+  createChildReply,
+  createNewDiscussion,
+  createNewReply,
+  deleteDiscussionReply,
+} from "@/app/lib/actions";
+import { Icons } from "@/components/icons";
 import "@blocknote/core/fonts/inter.css";
-import { useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/react/style.css";
 import "@ui/styles/globals.css";
-import { useTheme } from "next-themes";
-import { DiscussionCard } from "../(components)/cards";
+import { AnimatePresence } from "framer-motion";
+import {
+  DiscussionCard,
+  DiscussionOpener,
+  DiscussionReplyList,
+} from "../(components)/cards";
 
-// TODO: Add optimistic UI updates
 export default function View({
   discussions,
   categories,
@@ -50,10 +58,15 @@ export default function View({
   categories: string[];
   session: any;
 }) {
-  const editor = useCreateBlockNote();
-  const [clientDiscussions, setDiscussions] = useState(discussions);
-  const [filter, setFilter] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState<string>("");
   const [search, setSearch] = useState<string>("");
+  const [filter, setFilter] = useState<string[]>([]);
+  const [category, setCategory] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [contentText, setContentText] = useState<string>("");
+  const [clientDiscussions, setDiscussions] = useState(discussions);
 
   const handleFilterChange = useCallback(
     (value: string[]) => {
@@ -69,7 +82,7 @@ export default function View({
     return clientDiscussions.filter((discussion) =>
       filter.includes(discussion.category)
     );
-  }, [filter]);
+  }, [filter, discussions, clientDiscussions]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -81,51 +94,60 @@ export default function View({
     }
     return (
       discussion.title.toLowerCase().includes(search.toLowerCase()) ||
-      discussion.content.toLowerCase().includes(search.toLowerCase())
+      discussion.body.toLowerCase().includes(search.toLowerCase())
     );
   };
 
   const searchFilteredDiscussions = useMemo(() => {
     return filteredDiscussions.filter(searchFilter);
-  }, [search, filteredDiscussions, clientDiscussions.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, filteredDiscussions]);
 
-  const { theme } = useTheme();
-  const currTheme = {
-    [`data-theme-${theme}`]: true,
-  };
-
-  const [title, setTitle] = useState<string>("");
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
   }, []);
-
-  const [category, setCategory] = useState<string>("");
 
   const handleCategoryChange = useCallback((value: string) => {
     setCategory(value);
   }, []);
 
-  const [contentText, setContentText] = useState<string>("");
-  const handleContentTextChange = useCallback(() => {
-    setContentText(JSON.stringify(editor.document));
-  }, [editor.document]);
-
   const onSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
+      setLoading(true);
       e.preventDefault();
+      if (title === "" || contentText === "" || category === "") {
+        setError("Please fill out all fields!");
+        setLoading(false);
+        setTimeout(() => {
+          setError(null);
+        }, 4000);
+        return;
+      }
       const newDiscussion = await createNewDiscussion({
         title,
-        content: contentText,
+        body: contentText,
         category,
         userId: session.userId,
       });
-      setDiscussions((prev) => [
-        newDiscussion as unknown as Discussion,
-        ...prev,
-      ]);
+      setDiscussions((prev) => [newDiscussion, ...prev]);
+      setTitle("");
+      setContentText("");
+      setCategory("");
+      setOpen(false);
+      setLoading(false);
     },
-    [title, contentText, category]
+    [title, contentText, category, session.userId]
   );
+
+  // For when we integrate BlockNoteView into the discussion form
+  //   const currTheme = {
+  //     [`data-theme-${theme}`]: true,
+  //   };
+  //   const handleContentTextChange = useCallback(() => {
+  //     setContentText(JSON.stringify(editor.document));
+  //   }, [editor.document]);
+  //   const { theme } = useTheme();
+  //   const editor = useCreateBlockNote();
 
   return (
     <div>
@@ -143,15 +165,15 @@ export default function View({
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {categories.map((category, index) => (
+                {categories.map((category: string, index: number) => (
                   <DropdownMenuCheckboxItem
                     key={index}
                     checked={filter.includes(category)}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={(checked: boolean) => {
                       handleFilterChange(
                         checked
                           ? [...filter, category]
-                          : filter.filter((item) => item !== category)
+                          : filter.filter((item: string) => item !== category)
                       );
                     }}
                   >
@@ -170,13 +192,13 @@ export default function View({
                 onChange={(e) => handleSearchChange(e.target.value)}
               />
             </div>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" variant="outline">
                   Start a Discussion
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px]">
+              <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                   <DialogTitle>Start a New Discussion</DialogTitle>
                   <DialogDescription>
@@ -233,38 +255,115 @@ export default function View({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {categories &&
-                            categories.map((category, index) => (
-                              <SelectItem
-                                key={index}
-                                value={category ? category : "ALL"}
-                              >
-                                {category}
-                              </SelectItem>
-                            ))}
+                          {categories.map((category: string, index: number) => (
+                            <SelectItem key={index} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Post Discussion</Button>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      variant={error ? "destructive" : "default"}
+                    >
+                      {loading ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Icons.spinner className="w-6 h-6 animate-spin" />
+                          <p>Creating Discussion...</p>
+                        </div>
+                      ) : (
+                        <>
+                          {error ? (
+                            <div className="text-sm text-center">{error}</div>
+                          ) : (
+                            <>Start Discussion</>
+                          )}
+                        </>
+                      )}
+                    </Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
           </div>
         </div>
-        <div className="mt-4 space-y-4">
-          {searchFilteredDiscussions.map((discussion, index) => (
-            <DiscussionCard
-              key={index}
-              discussion={discussion}
-              session={session}
-              categories={categories}
-            />
-          ))}
-        </div>
+        <ul className="mt-4 space-y-4">
+          {/* https://github.com/framer/motion/issues/1850#issuecomment-1876786414  */}
+          <AnimatePresence initial={false} mode="popLayout">
+            {searchFilteredDiscussions.map((discussion: Discussion) => (
+              <DiscussionCard
+                key={discussion.id}
+                discussion={discussion}
+                session={session}
+                categories={categories}
+              />
+            ))}
+          </AnimatePresence>
+        </ul>
       </section>
     </div>
+  );
+}
+
+export function DiscussionView({
+  discussionDetails,
+  session,
+  replies,
+}: {
+  discussionDetails: Discussion;
+  session: any;
+  replies: any[];
+}) {
+  const [clientReplies, setReplies] = useState(replies);
+  const onDeleteReply = useCallback(async (id: string) => {
+    await deleteDiscussionReply(id);
+    setReplies((replies) => replies.filter((reply) => reply.id !== id));
+  }, []);
+
+  const onAddReply = useCallback(
+    async (reply: string, replyId?: string) => {
+      if (!reply) return;
+      if (!replyId) {
+        const newReply = await createNewReply({
+          posterId: session.userId,
+          discussionId: discussionDetails.id,
+          body: reply,
+        });
+        console.log("MAIN newReply:\n", newReply);
+        setReplies((replies) => [...replies, newReply]);
+      } else {
+        const newReply = await createChildReply({
+          posterId: session.userId,
+          discussionId: discussionDetails.id,
+          body: reply,
+          replyId,
+        });
+        console.log("CHILD newReply:\n", newReply);
+        setReplies((replies) => [...replies, newReply]);
+      }
+    },
+    [discussionDetails.id, session.userId]
+  );
+  return (
+    <section>
+      <DiscussionOpener
+        session={session}
+        discussion={JSON.parse(JSON.stringify(discussionDetails))}
+        onAddReply={onAddReply}
+      />
+      <div className="mt-8 space-y-4">
+        <DiscussionReplyList
+          replies={JSON.parse(JSON.stringify(clientReplies))}
+          onDeleteReply={onDeleteReply}
+          onAddReply={onAddReply}
+          discussionId={discussionDetails.id}
+          session={session}
+        />
+      </div>
+    </section>
   );
 }

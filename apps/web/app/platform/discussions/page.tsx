@@ -1,9 +1,6 @@
 import { getAllDiscussionCategories, getDicussions } from "@/app/lib/actions";
 import { getSession } from "@/app/lib/session";
-import { Discussion } from "@/app/lib/types";
 import View from "./view";
-
-export const dyanmic = "force-dynamic";
 
 export default async function DiscussionsPage() {
   const discussions = await getDicussions();
@@ -11,14 +8,12 @@ export default async function DiscussionsPage() {
   const session = await getSession();
   return (
     <>
-      <main className="container mx-auto grid grid-cols-1 gap-8 p-4">
+      <main className="container mx-auto grid grid-cols-1 w-4/6 gap-8 p-4">
         <div className="space-y-8">
           <View
-            discussions={
-              JSON.parse(JSON.stringify(discussions)) as Discussion[]
-            }
-            categories={JSON.parse(JSON.stringify(categories)) as string[]}
-            session={session}
+            discussions={JSON.parse(JSON.stringify(discussions))}
+            categories={JSON.parse(JSON.stringify(categories))}
+            session={JSON.parse(JSON.stringify(session))}
           />
         </div>
       </main>
