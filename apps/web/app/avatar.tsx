@@ -9,7 +9,7 @@ export default function UserAvatar({ session }: { session: any }) {
   useEffect(() => {
     const user = getUserById(session.userId);
     setUser(user);
-  });
+  }, [session.userId]);
 
   if (!user) {
     return null;
