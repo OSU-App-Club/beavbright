@@ -18,6 +18,7 @@ model User {
   lastLogin  DateTime?
   Discussion Discussion[]
   Reply      Reply[]
+  courses    Course[]
 }
 
 model Discussion {
@@ -41,4 +42,12 @@ model Reply {
     posterId     String     @map("posterId")
     discussion   Discussion @relation(fields: [discussionId], references: [id])
     poster       User       @relation(fields: [posterId], references: [id])
+}
+
+model Course {
+    id           String     @id @default(cuid())
+    createdAt    DateTime   @default(now())
+    code         String
+    title        String
+    users        User[]
 }
