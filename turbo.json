@@ -13,6 +13,8 @@
     "pipeline": {
         "build": {
             "dependsOn": [
+                "^db:generate",
+                "db:push",
                 "^build"
             ],
             "outputs": [
@@ -37,11 +39,6 @@
         },
         "db:push": {
             "cache": false
-        },
-        "install": {
-            "dependsOn": [
-                "^install"
-            ]
         }
     }
 }
