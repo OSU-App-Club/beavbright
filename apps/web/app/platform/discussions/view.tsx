@@ -39,8 +39,8 @@ import {
   deleteDiscussionReply,
 } from "@/app/lib/actions";
 import { Icons } from "@/components/icons";
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
+// import "@blocknote/core/fonts/inter.css";
+// import "@blocknote/react/style.css";
 import "@ui/styles/globals.css";
 import { AnimatePresence } from "framer-motion";
 import {

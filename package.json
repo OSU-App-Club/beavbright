@@ -4,12 +4,12 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build": "turbo run build",
+        "build": "turbo run install build db:init",
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "format": "prettier --write \"**/*.{ts,tsx,md}\"",
         "ui:add": "pnpm --filter ui ui:add",
-        "db:init": "pnpm --filter database db:init"
+        "db:init": "pnpm --filter database db:init-deploy"
     },
     "devDependencies": {
         "@turbo/gen": "^1.9.7",

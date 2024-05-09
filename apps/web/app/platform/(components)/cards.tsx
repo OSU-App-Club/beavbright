@@ -29,9 +29,9 @@ import { Separator } from "@ui/components/ui/separator";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
-import "@ui/styles/globals.css";
+// import "@blocknote/core/fonts/inter.css";
+// import "@blocknote/react/style.css";
+// import "@ui/styles/globals.css";
 import {
   Bird,
   CornerDownLeft,
