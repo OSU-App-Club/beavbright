@@ -13,7 +13,7 @@
         "db:studio": "prisma studio",
         "db:migrate": "prisma migrate dev",
         "db:postmigrate": "prisma generate",
-        "db:seed": "npx tsx seed",
+        "db:seed": "ts-node seed.ts",
         "db:clean": "prisma migrate reset --force"
     },
     "dependencies": {
@@ -21,6 +21,7 @@
         "@prisma/client": "5.5.2"
     },
     "devDependencies": {
-        "prisma": "5.5.2"
+        "prisma": "5.5.2",
+        "ts-node": "10.9.2"
     }
 }
