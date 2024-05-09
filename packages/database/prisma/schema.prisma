@@ -18,7 +18,7 @@ model User {
   lastLogin  DateTime?
   Discussion Discussion[]
   Reply      Reply[]
-  courses    Course[]
+  Course     Course[]
 }
 
 model Discussion {
@@ -49,5 +49,5 @@ model Course {
     createdAt    DateTime   @default(now())
     code         String
     title        String
-    users        User[]
+    User         User[]
 }

@@ -36,14 +36,14 @@ async function main() {
         email: faker.internet.email(),
         password: faker.internet.password(),
         avatar: faker.image.avatar(),
-        courses: {
+        Course: {
           connect: [discrete, dataStructures, webDev][i % 3],
         },
       },
       include: {
         Discussion: true,
         Reply: true,
-        courses: true,
+        Course: true,
       },
     });
 
