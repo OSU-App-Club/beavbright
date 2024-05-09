@@ -13,8 +13,9 @@
     "pipeline": {
         "build": {
             "dependsOn": [
-                "^build",
-                "^db:generate"
+                "^db:generate",
+                "db:push",
+                "^build"
             ],
             "outputs": [
                 ".next/**",
@@ -29,6 +30,9 @@
             ],
             "cache": false,
             "persistent": true
+        },
+        "db:init": {
+            "cache": false
         },
         "db:generate": {
             "cache": false
