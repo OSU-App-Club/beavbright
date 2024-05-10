@@ -11,6 +11,7 @@ import {
 
 import { Button } from "@ui/components/ui/button"
 import { Badge } from "@ui/components/ui/badge"
+import Link from 'next/link'
 
 
 import {
@@ -26,7 +27,6 @@ export default function View() {
             <main>
                 <Card>
                     <CardHeader>
-
                         <div className="flex justify-between items-center w-full">
                             <div className="flex gap-2">
                                 <CameraIcon className="w-5 h-5" />
@@ -35,10 +35,11 @@ export default function View() {
                             </div>
                             <Badge className="bg-green-500">Live</Badge>
                         </div>
-
                         <CardTitle className="text-2xl">MTH 242 Study Session</CardTitle>
                         <CardDescription>Join the MTH 242 study session</CardDescription>
-                        <Button>Join</Button>
+                        <Link href="study-groups/session">
+                            <Button>Join</Button>
+                        </Link>
                     </CardHeader>
                 </Card>
             </main>
