@@ -1,3 +1,5 @@
+"use client";
+
 import { ThemeProvider } from "@/components/theme-provider";
 import { HMSRoomProvider } from "@100mslive/react-sdk";
 import { Toaster } from "@ui/components/sonner";

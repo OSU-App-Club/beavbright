@@ -14,19 +14,29 @@ import {
   useHMSStore,
   useHMSActions,
 } from "@100mslive/react-sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function ChatBox() {
   const hmsActions = useHMSActions();
   const storeMessages = useHMSStore(selectHMSMessages);
 
-  // Will fix
+  // TEMP
+  useEffect(() => {
+    hmsActions.join({
+      userName: "Anonymous",
+      authToken: "token",
+    });
+  }, []);
+
+  // TEMP
   const [sender, setSender] = useState<string>("Imgyeong");
   const [input, setInput] = useState<string>("");
 
   const sendChat = () => {
-    hmsActions.sendBroadcastMessage(input);
-    setInput("");
+    if (input.length > 0) {
+      hmsActions.sendBroadcastMessage(input);
+      setInput("");
+    }
   };
 
   const onChangeHandler: React.ChangeEventHandler<HTMLTextAreaElement> = (
@@ -39,11 +49,13 @@ export function ChatBox() {
     <Card className="col-span-1 p-3">
       <CardHeader>
         <CardTitle>Chats</CardTitle>
-        <CardDescription>Note: All chats are not stored.</CardDescription>
+        <CardDescription>
+          Note: All chats are not permanently stored.
+        </CardDescription>
       </CardHeader>
       <div className="flex flex-col gap-1">
-        {storeMessages.map((msg) => {
-          return <MessageBox sender={sender} message={msg.message} />;
+        {storeMessages.map((msg, i) => {
+          return <MessageBox key={i} sender={sender} message={msg.message} />;
         })}
       </div>
       <div className="flex space-x-2 items-center">
@@ -60,7 +72,7 @@ export function ChatBox() {
 }
 
 export function VideoBox() {
-  return <div className="col-span-2"></div>;
+  return <div className="col-span-2 bg-slate-300"></div>;
 }
 
 export function MessageBox({ sender, message }: MessaageBoxProps) {

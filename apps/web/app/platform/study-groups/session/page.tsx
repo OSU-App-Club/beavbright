@@ -1,15 +1,15 @@
+"use client";
 
-
+import { ChatBox, VideoBox } from "./(components)/boxes";
+import { useHMSStore, selectIsConnectedToRoom } from "@100mslive/react-sdk";
 
 export default function session() {
+  const isConnected = useHMSStore(selectIsConnectedToRoom);
 
-
-
-    return (
-        <>
-            <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <h1>Welcome to the live sessions !</h1>
-            </main>
-        </>
-    );
+  return (
+    <div className="w-full grid grid-cols-3">
+      <VideoBox />
+      <ChatBox />
+    </div>
+  );
 }
