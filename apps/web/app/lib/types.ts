@@ -7,6 +7,11 @@ export interface User {
   avatar: string;
 }
 
+export interface MessaageBoxProps {
+  sender: string;
+  message: string;
+}
+
 export interface DiscussionCardProps {
   discussion: Discussion;
   session: SessionObject;
