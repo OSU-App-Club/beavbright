@@ -15,16 +15,19 @@ import {
   useHMSActions,
 } from "@100mslive/react-sdk";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 export function ChatBox() {
   const hmsActions = useHMSActions();
   const storeMessages = useHMSStore(selectHMSMessages);
+  const { courseId, roomCode } =
+    useParams<{ courseId: string; roomCode: string }>();
 
-  // TEMP
   useEffect(() => {
+    const token = hmsActions.getAuthTokenByRoomCode({ roomCode });
     hmsActions.join({
       userName: "Anonymous",
-      authToken: "token",
+      authToken: token,
     });
   }, []);
 
