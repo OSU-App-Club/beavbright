@@ -11,19 +11,22 @@ async function main() {
 
   const discrete = await prisma.course.create({
     data: {
-      code: "MTH 231",
+      subject: "MTH",
+      code: 231,
       title: "Elements of Discrete Mathematics",
     },
   });
   const dataStructures = await prisma.course.create({
     data: {
-      code: "CS 261",
+      subject: "CS",
+      code: 161,
       title: "Data Structures",
     },
   });
   const webDev = await prisma.course.create({
     data: {
-      code: "CS 290",
+      subject: "CS",
+      code: 290,
       title: "Web Development",
     },
   });
