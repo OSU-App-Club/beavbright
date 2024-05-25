@@ -27,11 +27,11 @@ export async function decrypt(token: string): Promise<JWTPayload> {
   }
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, cookiesAccepted = false) {
   // 7 days
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
   // Encrypt the user ID and set it as a cookie
-  const session = await encrypt({ userId }, expiresAt);
+  const session = await encrypt({ userId, cookiesAccepted }, expiresAt);
   cookies().set("session", session, {
     httpOnly: true,
     secure: true,
@@ -51,5 +51,28 @@ export async function getSession(): Promise<JWTPayload | Error> {
     return await decrypt(session);
   } catch (error: any) {
     return error;
+  }
+}
+
+export async function updateSession(payload: Partial<JWTPayload>) {
+  try {
+    const currentSession = await getSession();
+    if (currentSession instanceof Error) {
+      throw new Error("No session found");
+    }
+
+    const updatedSession = { ...currentSession, ...payload };
+    const expiresAt = new Date(currentSession.exp * 1000);
+    const session = await encrypt(updatedSession, expiresAt);
+
+    cookies().set("session", session, {
+      httpOnly: true,
+      secure: true,
+      expires: expiresAt,
+      sameSite: "lax",
+      path: "/",
+    });
+  } catch (error: any) {
+    throw new Error("Failed to update session");
   }
 }

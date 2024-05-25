@@ -5,8 +5,13 @@ import {
   Search,
   ThreeRecentStudyGroups,
 } from "./(components)/cards";
+import { getSession } from "@/app/lib/session";
+import CookieModal from "@/components/CookieModal";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const session = await getSession();
+  const parsedSession = JSON.parse(JSON.stringify(session));
+  const cookiesAccepted = parsedSession.cookiesAccepted || false;
   return (
     <>
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -24,6 +29,7 @@ export default function Dashboard() {
           <Create />
         </div>
       </main>
+      {!cookiesAccepted && <CookieModal />}
     </>
   );
 }
