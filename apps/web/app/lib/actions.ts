@@ -3,7 +3,7 @@
 import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
-import { createSession } from "./session";
+import { createSession, updateSession } from "./session";
 import { CreateReplyFields, LoginFields, CourseFields } from "./types";
 
 export async function createUser(data: LoginFields) {
@@ -33,8 +33,8 @@ export async function authorizeUser(email: string, password: string) {
   if (!compareSync(password, user.password)) {
     throw new Error("Incorrect email or password");
   }
-
-  await createSession(user.id);
+  const cookiesAccepted = false;
+  await createSession(user.id, cookiesAccepted);
 
   return { success: true };
 }
@@ -292,4 +292,8 @@ export async function viewDiscussionPost(id: string) {
     },
   });
   revalidatePath(`/platform/discussions/${id}`);
+}
+
+export async function acceptCookies() {
+  await updateSession({ cookiesAccepted: true });
 }
