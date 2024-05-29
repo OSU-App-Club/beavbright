@@ -4,7 +4,7 @@ import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
 import { createSession } from "./session";
-import { CreateReplyFields, LoginFields } from "./types";
+import { CreateReplyFields, LoginFields, CourseFields } from "./types";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -37,6 +37,46 @@ export async function authorizeUser(email: string, password: string) {
   await createSession(user.id);
 
   return { success: true };
+}
+
+export async function createCourse(data: CourseFields) {
+  const { subject, code, title } = data;
+  await prisma.course.create({
+    data: {
+      subject,
+      code,
+      title,
+    },
+  });
+
+  return { success: true };
+}
+
+export async function getCourse(subject: string, code: number) {
+  const course = await prisma.course.findFirst({
+    where: { subject: subject, code: code },
+  });
+  return course;
+}
+
+export async function getCourses(subject: string, code?: number) {
+  const courses = await prisma.course.findMany({
+    where: { subject: subject, code: code },
+    orderBy: [{ subject: "asc" }, { code: "asc" }],
+  });
+  return courses;
+}
+
+export async function getAllCourses() {
+  const courses = await prisma.course.findMany({
+    orderBy: [{ subject: "asc" }, { code: "asc" }],
+  });
+  return courses;
+}
+
+export async function deleteCourse(id: string) {
+  await prisma.course.delete({ where: { id } });
+  revalidatePath("/platform/courses");
 }
 
 export async function getDicussions() {

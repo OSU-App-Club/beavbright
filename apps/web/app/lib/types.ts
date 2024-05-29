@@ -79,3 +79,9 @@ export type CreateReplyFields = {
   posterId: string;
   replyId?: string;
 };
+
+export type CourseFields = {
+  subject: string;
+  code: number;
+  title: string;
+};
