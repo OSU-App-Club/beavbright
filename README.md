@@ -24,6 +24,12 @@ BeavBright's code organization is based on this [awesome turborepo template](htt
 
 ## Getting Started 🏁
 
+In order to run global scripts, install the following:
+
+```sh
+npm install -g dotenv-cli
+```
+
 1. Clone the repository:
 
 ```sh
