@@ -1,4 +1,5 @@
 import { getSession } from "@/app/lib/session";
+import prisma from "@/app/lib/prisma";
 import View from "./view";
 
 export default async function DiscussionsPage() {

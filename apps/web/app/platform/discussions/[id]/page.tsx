@@ -42,6 +42,7 @@ export default async function Component() {
       label: discussionDetails.title,
     },
   ];
+
   return (
     <>
       <div>

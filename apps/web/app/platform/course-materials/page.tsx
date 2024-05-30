@@ -3,7 +3,7 @@ export default async function CourseMaterialPage() {
     <>
       <main className="container mx-auto grid grid-cols-1 w-4/6 gap-8 p-4">
         <div className="space-y-8">
-          <div>Course</div>
+          <div>Course Material</div>
         </div>
       </main>
     </>
