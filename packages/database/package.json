@@ -1,27 +1,27 @@
 {
-    "name": "database",
-    "license": "MIT",
-    "version": "0.0.0",
-    "main": "./index.ts",
-    "types": "./index.ts",
-    "scripts": {
-        "db:generate": "prisma generate",
-        "db:push": "prisma db push --skip-generate",
-        "db:format": "prisma format",
-        "db:init": "pnpm install && prisma generate && prisma db push --skip-generate && pnpm run db:seed && prisma studio",
-        "db:prod": "prisma migrate deploy",
-        "db:studio": "prisma studio",
-        "db:migrate": "prisma migrate dev",
-        "db:postmigrate": "prisma generate",
-        "db:seed": "npx tsx seed",
-        "db:clean": "prisma migrate reset --force"
-    },
-    "dependencies": {
-        "@faker-js/faker": "^8.4.1",
-        "@prisma/client": "5.5.2",
-        "tsx": "^4.10.2"
-    },
-    "devDependencies": {
-        "prisma": "5.5.2"
-    }
+  "name": "database",
+  "license": "MIT",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "db:generate": "dotenv -e .env.local -- prisma generate",
+    "db:push": "dotenv -e .env.local -- prisma db push --skip-generate",
+    "db:format": "dotenv -e .env.local -- prisma format",
+    "db:init": "dotenv -e .env.local -- pnpm install && prisma generate && prisma db push --skip-generate && pnpm run db:seed && prisma studio",
+    "db:prod": "dotenv -e .env.local prisma migrate deploy",
+    "db:studio": "dotenv -e .env.local -- prisma studio",
+    "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:postmigrate": "dotenv -e .env.local -- prisma generate",
+    "db:seed": "dotenv -e .env.local -- npx tsx seed",
+    "db:clean": "dotenv -e .env.local -- prisma migrate reset --force"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@prisma/client": "5.5.2",
+    "tsx": "^4.10.2"
+  },
+  "devDependencies": {
+    "prisma": "5.5.2"
+  }
 }
