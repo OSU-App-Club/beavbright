@@ -4,7 +4,12 @@ import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
 import { createSession, updateSession, getSession } from "./session";
-import { CreateReplyFields, LoginFields, CourseFields } from "./types";
+import {
+  CreateReplyFields,
+  LoginFields,
+  CourseFields,
+  RoomFields,
+} from "./types";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -205,6 +210,61 @@ export async function editDiscussion(
     },
   });
   revalidatePath("/platform/discussions");
+}
+
+export async function createRoom(data: RoomFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description, courseId, creatorId, subject, code } = data;
+  const room = await prisma.room.create({
+    data: {
+      name,
+      description,
+      course: {
+        connect: {
+          id: courseId,
+        },
+      },
+      creator: {
+        connect: {
+          id: creatorId,
+        },
+      },
+    },
+    include: {
+      creator: true,
+      course: true,
+    },
+  });
+
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
+
+  return room;
+}
+
+export async function deleteRoom(id: string, subject: string, code: number) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  await prisma.room.delete({ where: { id } });
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
+}
+
+export async function updateRoom(data: RoomFields, id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description, subject, code } = data;
+
+  await prisma.room.update({
+    where: { id },
+    data: {
+      name,
+      description,
+    },
+  });
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
 }
 
 export async function getUserById(id: string) {

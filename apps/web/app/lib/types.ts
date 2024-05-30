@@ -85,3 +85,12 @@ export type CourseFields = {
   code: number;
   title: string;
 };
+
+export type RoomFields = {
+  name: string;
+  description?: string;
+  courseId: string;
+  creatorId: string;
+  subject: string;
+  code: number;
+};

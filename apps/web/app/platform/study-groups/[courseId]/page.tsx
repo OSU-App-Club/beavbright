@@ -1,6 +1,8 @@
 "use client";
+
 import { RoomCard } from "../../(components)/cards";
 import RoomForm from "./form";
+
 export default function RoomPage() {
   return (
     <>
