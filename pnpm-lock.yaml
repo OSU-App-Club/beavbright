@@ -96,12 +96,18 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.51.3
+        version: 7.51.3(react@18.2.0)
       sonner:
         specifier: ^1.4.41
         version: 1.4.41(react-dom@18.2.0)(react@18.2.0)
       ui:
         specifier: workspace:*
         version: link:../../packages/ui
+      zod:
+        specifier: link:@hookform/resolvers/zod
+        version: 3.23.4
     devDependencies:
       '@100mslive/react-sdk':
         specifier: ^0.10.10

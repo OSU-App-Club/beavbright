@@ -1,10 +1,3 @@
-import {
-  getCourses,
-  getCourse,
-  getAllCourses,
-  createCourse,
-} from "@/app/lib/actions";
-
 export default async function CourseMaterialPage() {
   return (
     <>

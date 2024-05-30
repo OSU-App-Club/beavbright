@@ -3,7 +3,7 @@
 import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
-import { createSession, updateSession } from "./session";
+import { createSession, updateSession, getSession } from "./session";
 import { CreateReplyFields, LoginFields, CourseFields } from "./types";
 
 export async function createUser(data: LoginFields) {
@@ -40,6 +40,9 @@ export async function authorizeUser(email: string, password: string) {
 }
 
 export async function createCourse(data: CourseFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const { subject, code, title } = data;
   await prisma.course.create({
     data: {
@@ -52,100 +55,12 @@ export async function createCourse(data: CourseFields) {
   return { success: true };
 }
 
-export async function getCourse(subject: string, code: number) {
-  const course = await prisma.course.findFirst({
-    where: { subject: subject, code: code },
-  });
-  return course;
-}
-
-export async function getCourses(subject: string, code?: number) {
-  const courses = await prisma.course.findMany({
-    where: { subject: subject, code: code },
-    orderBy: [{ subject: "asc" }, { code: "asc" }],
-  });
-  return courses;
-}
-
-export async function getAllCourses() {
-  const courses = await prisma.course.findMany({
-    orderBy: [{ subject: "asc" }, { code: "asc" }],
-  });
-  return courses;
-}
-
 export async function deleteCourse(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await prisma.course.delete({ where: { id } });
   revalidatePath("/platform/courses");
-}
-
-export async function getDicussions() {
-  const discussions = await prisma.discussion.findMany({
-    include: {
-      poster: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return discussions;
-}
-
-export async function getAllDiscussionCategories() {
-  const categories = await prisma.discussion.findMany({
-    select: {
-      category: true,
-    },
-  });
-
-  const defaultCategories = [
-    "General",
-    "Computer Science",
-    "Study Groups",
-    "Math",
-    "Physics",
-    "Biology",
-    "Chemistry",
-    "Business",
-    "Engineering",
-    "Health",
-    "Humanities",
-    "Social Sciences",
-    "Events",
-  ];
-
-  const uniqueCategories = Array.from(
-    new Set(categories.map((category) => category.category))
-  ).filter((category) => category !== "");
-
-  const allCategories = [...defaultCategories, ...uniqueCategories];
-  return allCategories;
-}
-
-export async function getDiscussionDetails(id: string) {
-  const discussion = await prisma.discussion.findUnique({
-    where: { id },
-    include: {
-      poster: true,
-    },
-  });
-  return discussion;
-}
-
-export async function getDiscussionReplies(id: string) {
-  const replies = await prisma.reply.findMany({
-    where: {
-      discussionId: id,
-    },
-    include: {
-      poster: true,
-      discussion: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-  return replies;
 }
 
 export async function createNewReply(data: CreateReplyFields) {
@@ -184,6 +99,9 @@ export async function createNewReply(data: CreateReplyFields) {
 
 // We'll need this for "Reply to a reply" feature (WIP)
 export async function createChildReply(data: CreateReplyFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const reply = await prisma.reply.create({
     data: {
       body: data.body,
@@ -218,6 +136,9 @@ export async function createChildReply(data: CreateReplyFields) {
 }
 
 export async function deleteDiscussionReply(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const dicussionId = (await prisma.reply.findUnique({ where: { id } }))
     .discussionId;
   await prisma.reply.delete({ where: { id } });
@@ -238,6 +159,9 @@ export async function createNewDiscussion(data: {
   category: string;
   userId: string;
 }) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const discussion = await prisma.discussion.create({
     data: {
       title: data.title,
@@ -258,6 +182,9 @@ export async function createNewDiscussion(data: {
 }
 
 export async function deleteDiscussison(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await prisma.discussion.delete({ where: { id } });
   revalidatePath("/platform/discussions");
 }
@@ -266,6 +193,9 @@ export async function editDiscussion(
   id: string,
   data: { title: string; body: string; category: string }
 ) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await prisma.discussion.update({
     where: { id },
     data: {

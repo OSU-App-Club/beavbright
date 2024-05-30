@@ -33,7 +33,7 @@ export default function View() {
               Course Code
             </Label>
             <Input
-              id="name"
+              id="course"
               placeholder="ex) CS 161"
               className="col-span-3 placeholder-opacity-50"
             />

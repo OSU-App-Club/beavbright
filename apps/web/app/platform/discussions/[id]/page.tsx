@@ -1,4 +1,3 @@
-import { getDiscussionDetails, getDiscussionReplies } from "@/app/lib/actions";
 import { getSession } from "@/app/lib/session";
 import { SlashIcon } from "@radix-ui/react-icons";
 import {
@@ -14,11 +13,26 @@ import { DiscussionView } from "../view";
 
 export default async function Component() {
   const headersObj = headers();
-  const discussionDetails = await getDiscussionDetails(
-    headersObj.get("discussionId")
-  );
+  const discussionId = headersObj.get("discussionId");
+  const discussionDetails = await prisma.discussion.findUnique({
+    where: { id: discussionId },
+    include: {
+      poster: true,
+    },
+  });
+  const replies = await prisma.reply.findMany({
+    where: {
+      discussionId: discussionId,
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
   const session = await getSession();
-  const replies = await getDiscussionReplies(headersObj.get("discussionId"));
 
   const breadcrumbs = [
     { href: "/platform", label: "Home" },
