@@ -19,6 +19,8 @@ model User {
   Discussion Discussion[]
   Reply      Reply[]
   Course     Course[]
+  RoomCreated Room[]      @relation("CreatorOfRoom")
+  RoomUser    Room[]      @relation("UserInRoom")
 }
 
 model Discussion {
@@ -47,7 +49,21 @@ model Reply {
 model Course {
     id           String     @id @default(cuid())
     createdAt    DateTime   @default(now())
-    code         String
+    subject      String
+    code         Int        @default(0)
     title        String
     User         User[]
+    Room         Room[]
+}
+
+model Room {
+    id           String     @id @default(cuid())
+    createdAt    DateTime   @default(now())
+    name         String
+    description  String
+    courseId     String     @map("courseId")
+    course       Course     @relation(fields: [courseId], references: [id])
+    creatorId    String     @map("creatorId")
+    creator      User       @relation(fields: [creatorId], references: [id], name: "CreatorOfRoom")
+    User         User[]     @relation("UserInRoom")
 }

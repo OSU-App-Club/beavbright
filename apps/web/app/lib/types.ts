@@ -7,6 +7,11 @@ export interface User {
   avatar: string;
 }
 
+export interface MessaageBoxProps {
+  sender: string;
+  message: string;
+}
+
 export interface DiscussionCardProps {
   discussion: Discussion;
   session: SessionObject;
@@ -73,4 +78,19 @@ export type CreateReplyFields = {
   discussionId: string;
   posterId: string;
   replyId?: string;
+};
+
+export type CourseFields = {
+  subject: string;
+  code: number;
+  title: string;
+};
+
+export type RoomFields = {
+  name: string;
+  description?: string;
+  courseId: string;
+  creatorId: string;
+  subject: string;
+  code: number;
 };

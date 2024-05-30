@@ -7,6 +7,7 @@ import {
 } from "@/app/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Button } from "@ui/components/ui/button";
+import { Badge } from "@ui/components/ui/badge";
 import { format } from "date-fns";
 
 import {
@@ -27,13 +28,14 @@ import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import { Separator } from "@ui/components/ui/separator";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/react/style.css";
 import "@ui/styles/globals.css";
 import {
   Bird,
+  CameraIcon,
   CornerDownLeft,
   EyeIcon,
   MessageCircleIcon,
@@ -47,6 +49,7 @@ import {
 } from "lucide-react";
 
 import {
+  ChatBubbleIcon,
   ChevronDownIcon,
   CircleIcon,
   DotFilledIcon,
@@ -232,7 +235,7 @@ export function YourCourses() {
   );
 }
 
-function CourseCard() {
+export function CourseCard() {
   return (
     <Card>
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
@@ -273,7 +276,7 @@ function CourseCard() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex space-x-4 text-sm text-muted-foreground">
+        <div className="flex space-x-4 text-sm text-muted-foreground mb-4">
           <div className="flex items-center">
             <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
             Computer Science
@@ -284,8 +287,41 @@ function CourseCard() {
           </div>
           <div>Spring 2022</div>
         </div>
+        <div className="flex flex-row space-x-3">
+          <Link href="study-groups/cs161" className="w-full">
+            <Button className="w-full">Enter</Button>
+          </Link>
+          <Button className="w-full">Leave</Button>
+        </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function RoomCard() {
+  return (
+    <main>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center w-full">
+            <div className="flex gap-2">
+              <CameraIcon className="w-5 h-5" />
+              <ChatBubbleIcon className="w-5 h-5" />
+              <Mic className="w-5 h-5" />
+            </div>
+            <Badge className="bg-green-500">Live</Badge>
+          </div>
+          <CardTitle className="text-2xl">MTH 242 Study Session</CardTitle>
+          <CardDescription>Join the MTH 242 study session</CardDescription>
+          <div className="flex flex-row space-x-3">
+            <Link href="cs161/123x" className="w-full">
+              <Button className="w-full">Join</Button>
+            </Link>
+            <Button className="w-full">Leave</Button>
+          </div>
+        </CardHeader>
+      </Card>
+    </main>
   );
 }
 

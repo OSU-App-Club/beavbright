@@ -19,6 +19,8 @@ import {
 import Link from "next/link";
 import { sidebarNavItems } from "../lib/constants";
 
+import { selectIsConnectedToRoom, useHMSStore } from "@100mslive/react-sdk";
+
 export default async function Layout({
   children,
 }: {
@@ -84,6 +86,7 @@ export default async function Layout({
             </header>
           </div>
         </TooltipProvider>
+
         <main className="flex flex-col w-full h-full p-4 overflow-y-auto">
           {children}
         </main>

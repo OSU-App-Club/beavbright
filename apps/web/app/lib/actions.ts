@@ -3,8 +3,13 @@
 import prisma from "@/app/lib/prisma";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
-import { createSession, updateSession } from "./session";
-import { CreateReplyFields, LoginFields } from "./types";
+import { createSession, updateSession, getSession } from "./session";
+import {
+  CreateReplyFields,
+  LoginFields,
+  CourseFields,
+  RoomFields,
+} from "./types";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -39,73 +44,28 @@ export async function authorizeUser(email: string, password: string) {
   return { success: true };
 }
 
-export async function getDicussions() {
-  const discussions = await prisma.discussion.findMany({
-    include: {
-      poster: true,
-    },
-    orderBy: {
-      createdAt: "desc",
+export async function createCourse(data: CourseFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { subject, code, title } = data;
+  await prisma.course.create({
+    data: {
+      subject,
+      code,
+      title,
     },
   });
-  return discussions;
+
+  return { success: true };
 }
 
-export async function getAllDiscussionCategories() {
-  const categories = await prisma.discussion.findMany({
-    select: {
-      category: true,
-    },
-  });
+export async function deleteCourse(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
 
-  const defaultCategories = [
-    "General",
-    "Computer Science",
-    "Study Groups",
-    "Math",
-    "Physics",
-    "Biology",
-    "Chemistry",
-    "Business",
-    "Engineering",
-    "Health",
-    "Humanities",
-    "Social Sciences",
-    "Events",
-  ];
-
-  const uniqueCategories = Array.from(
-    new Set(categories.map((category) => category.category))
-  ).filter((category) => category !== "");
-
-  const allCategories = [...defaultCategories, ...uniqueCategories];
-  return allCategories;
-}
-
-export async function getDiscussionDetails(id: string) {
-  const discussion = await prisma.discussion.findUnique({
-    where: { id },
-    include: {
-      poster: true,
-    },
-  });
-  return discussion;
-}
-
-export async function getDiscussionReplies(id: string) {
-  const replies = await prisma.reply.findMany({
-    where: {
-      discussionId: id,
-    },
-    include: {
-      poster: true,
-      discussion: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-  return replies;
+  await prisma.course.delete({ where: { id } });
+  revalidatePath("/platform/courses");
 }
 
 export async function createNewReply(data: CreateReplyFields) {
@@ -144,6 +104,9 @@ export async function createNewReply(data: CreateReplyFields) {
 
 // We'll need this for "Reply to a reply" feature (WIP)
 export async function createChildReply(data: CreateReplyFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const reply = await prisma.reply.create({
     data: {
       body: data.body,
@@ -178,6 +141,9 @@ export async function createChildReply(data: CreateReplyFields) {
 }
 
 export async function deleteDiscussionReply(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const dicussionId = (await prisma.reply.findUnique({ where: { id } }))
     .discussionId;
   await prisma.reply.delete({ where: { id } });
@@ -198,6 +164,9 @@ export async function createNewDiscussion(data: {
   category: string;
   userId: string;
 }) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   const discussion = await prisma.discussion.create({
     data: {
       title: data.title,
@@ -218,6 +187,9 @@ export async function createNewDiscussion(data: {
 }
 
 export async function deleteDiscussison(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await prisma.discussion.delete({ where: { id } });
   revalidatePath("/platform/discussions");
 }
@@ -226,6 +198,9 @@ export async function editDiscussion(
   id: string,
   data: { title: string; body: string; category: string }
 ) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
   await prisma.discussion.update({
     where: { id },
     data: {
@@ -235,6 +210,61 @@ export async function editDiscussion(
     },
   });
   revalidatePath("/platform/discussions");
+}
+
+export async function createRoom(data: RoomFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description, courseId, creatorId, subject, code } = data;
+  const room = await prisma.room.create({
+    data: {
+      name,
+      description,
+      course: {
+        connect: {
+          id: courseId,
+        },
+      },
+      creator: {
+        connect: {
+          id: creatorId,
+        },
+      },
+    },
+    include: {
+      creator: true,
+      course: true,
+    },
+  });
+
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
+
+  return room;
+}
+
+export async function deleteRoom(id: string, subject: string, code: number) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  await prisma.room.delete({ where: { id } });
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
+}
+
+export async function updateRoom(data: RoomFields, id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description, subject, code } = data;
+
+  await prisma.room.update({
+    where: { id },
+    data: {
+      name,
+      description,
+    },
+  });
+  revalidatePath(`/platform/study-groups/${subject}${code}`);
 }
 
 export async function getUserById(id: string) {
