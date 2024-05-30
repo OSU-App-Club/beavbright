@@ -104,14 +104,6 @@ export function Navbar() {
             >
               Login
             </a>
-            <a
-              href="/register"
-              className={`w-fit text-xl ${buttonVariants({
-                variant: "ghost",
-              })}`}
-            >
-              Register
-            </a>
             <ModeToggle />
           </NavigationMenuItem>
         </div>
