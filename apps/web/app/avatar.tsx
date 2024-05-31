@@ -14,7 +14,6 @@ export default async function UserAvatar({
   if (!user) {
     return null;
   }
-  console.log(user);
   return (
     <div>
       <Avatar className="h-8 w-8">

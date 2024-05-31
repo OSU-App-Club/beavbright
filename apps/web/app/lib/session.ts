@@ -61,7 +61,6 @@ export async function updateSession(payload: Partial<JWTPayload>) {
   try {
     // Get the session cookies
     const session = cookies().get("session");
-    console.log("session", session);
     if (!session) {
       throw new Error("No session found");
     }
