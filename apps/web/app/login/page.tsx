@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import { LoginForm } from "@/components/auth-form";
 import { signIn } from "@/app/auth";
 
 export default function LoginPage() {
@@ -9,13 +8,16 @@ export default function LoginPage() {
       <div className="flex items-center justify-center py-12">
         <form
           action={async () => {
-            "use server"
-            await signIn("google")
+            "use server";
+            await signIn("google", {
+              redirect: true,
+              redirectTo: "/platform",
+            });
           }}
-        > 
+        >
           <button className="border rounded-md" type="submit">
             <div className="flex flex-row justify-center items-center px-8 py-4">
-              <Image 
+              <Image
                 src="/google-icon.svg"
                 alt="Google Logo"
                 width="24"
@@ -24,7 +26,6 @@ export default function LoginPage() {
               />
               <span>Sign in with Google</span>
             </div>
-            
           </button>
         </form>
       </div>

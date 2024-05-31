@@ -1,16 +1,16 @@
 "use client";
 
 import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuList,
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
 } from "@ui/components/ui/navigation-menu";
 import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from "@ui/components/ui/sheet";
 import { useState } from "react";
 
@@ -108,7 +108,7 @@ export function Navbar({ session }: { session: JWTPayload | null }) {
                   })}`}
                 >
                   Dashboard
-                              </a>
+                </a>
                 <a
                   href="/logout"
                   className={`w-fit text-xl ${buttonVariants({

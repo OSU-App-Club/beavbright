@@ -1,6 +1,8 @@
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
+import { Session } from "next-auth";
 import { cookies } from "next/headers";
 import "server-only";
+import { auth } from "../auth";
 
 const secretKey = process.env.JWT_SECRET;
 // We can also use a random string as a secret key
@@ -41,38 +43,38 @@ export async function createSession(userId: string, cookiesAccepted = false) {
   });
 }
 
-export async function getSession(): Promise<JWTPayload | Error> {
+export async function getSession(): Promise<Session> {
   try {
     // Get the session cookies
-    const session = cookies().get("session")?.value;
+    const session = await auth();
     if (!session) {
       throw new Error("No session found");
     }
-    return await decrypt(session);
+    return session;
   } catch (error: any) {
     return error;
   }
 }
 
+//TODO: Adapt this to the new session structure (next-auth)
 export async function updateSession(payload: Partial<JWTPayload>) {
   try {
-    const currentSession = await getSession();
-    if (currentSession instanceof Error) {
+    // Get the session cookies
+    const session = cookies().get("session");
+    console.log("session", session);
+    if (!session) {
       throw new Error("No session found");
     }
-
-    const updatedSession = { ...currentSession, ...payload };
-    const expiresAt = new Date(currentSession.exp * 1000);
-    const session = await encrypt(updatedSession, expiresAt);
-
-    cookies().set("session", session, {
+    // Update the session with the new payload
+    const newSession = await encrypt({ ...session, ...payload }, new Date());
+    cookies().set("session", newSession, {
       httpOnly: true,
       secure: true,
-      expires: expiresAt,
+      expires: new Date(),
       sameSite: "lax",
       path: "/",
     });
   } catch (error: any) {
-    throw new Error("Failed to update session");
+    return error;
   }
 }
