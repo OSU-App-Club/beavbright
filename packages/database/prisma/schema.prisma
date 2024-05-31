@@ -17,10 +17,10 @@ model User {
   sessions      Session[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  firstName  String
-  lastName   String
-  password   String
-  avatar     String
+  firstName  String?
+  lastName   String?
+  password   String?
+  avatar     String?
   lastLogin  DateTime?
   Discussion Discussion[]
   Reply      Reply[]
