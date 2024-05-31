@@ -16,46 +16,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@ui/components/ui/tooltip";
+import Link from "next/link";
+import { sidebarNavItems } from "../lib/constants";
 
-export const sidebarNavItems = [
-  {
-    title: "Home",
-    href: "/platform",
-    icon: <HomeIcon size={24} />,
-  },
-  {
-    title: "Study Groups",
-    href: "/platform/study-groups",
-    icon: <Users size={24} />,
-  },
-  {
-    title: "Discussions",
-    href: "/platform/discussions",
-    icon: <ListIcon size={24} />,
-  },
-  {
-    title: "Course Materials",
-    href: "/platform/course-materials",
-    icon: <BookIcon size={24} />,
-  },
-  {
-    title: "Profile",
-    href: "/platform/profile",
-    icon: <User2Icon size={24} />,
-  },
-  {
-    title: "Sign Out",
-    href: "/logout",
-    icon: <LogOutIcon size={24} />,
-  },
-];
+import { selectIsConnectedToRoom, useHMSStore } from "@100mslive/react-sdk";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
-      <div className="grid h-screen w-full pl-[53px]">
+      <div className="grid h-full w-full pl-[53px]">
         <TooltipProvider>
-          <aside className="inset-y fixed  left-0 z-20 flex h-full flex-col border-r">
+          <aside className="inset-y fixed left-0 z-20 flex h-full flex-col border-r">
             <div className="border-b p-2">
               <a href="/">
                 <Button variant="outline" size="icon" aria-label="Home">
@@ -65,48 +40,40 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <nav className="grid gap-1 p-2">
               {sidebarNavItems.slice(0, 4).map((item) => (
-                <>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a href={item.href}>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-lg"
-                          aria-label={item.title}
-                        >
-                          {item.icon}
-                        </Button>
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={5}>
-                      {item.title}
-                    </TooltipContent>
-                  </Tooltip>
-                </>
+                <Tooltip key={item.title}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-lg"
+                      aria-label={item.title}
+                    >
+                      <Link href={item.href}>{item.icon}</Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={5}>
+                    {item.title}
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </nav>
             <nav className="mt-auto grid gap-1 p-2">
               {sidebarNavItems.slice(4).map((item) => (
-                <>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <a href={item.href}>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-lg"
-                          aria-label={item.title}
-                        >
-                          {item.icon}
-                        </Button>
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={5}>
-                      {item.title}
-                    </TooltipContent>
-                  </Tooltip>
-                </>
+                <Tooltip key={item.title}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-lg"
+                      aria-label={item.title}
+                    >
+                      <Link href={item.href}>{item.icon}</Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={5}>
+                    {item.title}
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </nav>
           </aside>
@@ -117,9 +84,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <ModeToggle />
               </div>
             </header>
-            <main className="flex-1 overflow-auto p-4">{children}</main>
           </div>
         </TooltipProvider>
+
+        <main className="flex flex-col w-full h-full p-4 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </>
   );

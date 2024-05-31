@@ -18,7 +18,8 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN corepack enable && corepack prepare pnpm@8.6.2 --activate
+# 8.6.2 -> 9.1.0
+RUN corepack enable && corepack prepare pnpm@9.1.0 --activate
 
 RUN pnpm --version
 RUN pnpm install --frozen-lockfile

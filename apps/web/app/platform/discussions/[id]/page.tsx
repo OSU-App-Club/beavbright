@@ -1,49 +1,52 @@
-import { breadcrumbs, replies } from "@/lib/constants";
+import { getSession } from "@/app/lib/session";
 import { SlashIcon } from "@radix-ui/react-icons";
-import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
-import { Blockquote } from "@ui/components/ui/blockquote";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
 } from "@ui/components/ui/breadcrumb";
-import { Button } from "@ui/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@ui/components/ui/card";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@ui/components/ui/drawer";
-import { Separator } from "@ui/components/ui/separator";
-import { Textarea } from "@ui/components/ui/textarea";
-import {
-  ArrowBigLeftDash,
-  ClockIcon,
-  EyeIcon,
-  MessageCircleIcon,
-} from "lucide-react";
+import { ArrowBigLeftDash } from "lucide-react";
+import { headers } from "next/headers";
 import Link from "next/link";
-import {
-  DiscussionOpenerProps,
-  DiscussionReplyProps,
-} from "../../../../lib/types";
+import { DiscussionView } from "../view";
 
-export default function Component() {
+export default async function Component() {
+  const headersObj = headers();
+  const discussionId = headersObj.get("discussionId");
+  const discussionDetails = await prisma.discussion.findUnique({
+    where: { id: discussionId },
+    include: {
+      poster: true,
+    },
+  });
+  const replies = await prisma.reply.findMany({
+    where: {
+      discussionId: discussionId,
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  const session = await getSession();
+
+  const breadcrumbs = [
+    { href: "/platform", label: "Home" },
+    { href: "/platform/discussions", label: "Discussions" },
+    {
+      href: `/platform/discussions/${discussionDetails.id}`,
+      label: discussionDetails.title,
+    },
+  ];
+
   return (
     <>
       <div>
-        <div className="container mx-auto grid grid-cols-1 gap-8 p-4">
+        <div className="container mx-auto grid grid-cols-1 w-4/6 gap-8 p-8">
           <div className="flex justify-between items-center gap-4">
             <AutoBreadcrumb links={breadcrumbs} />
             <nav>
@@ -56,21 +59,11 @@ export default function Component() {
               </Link>
             </nav>
           </div>
-          <section>
-            <DiscussionOpener
-              name="John Doe"
-              avatar="/placeholder-avatar.jpg"
-              content="Anyone have tips for acing the CS 161 final?"
-              category="Computer Science"
-              replies={12}
-              views={325}
-            />
-            <div className="mt-8 space-y-4">
-              {replies.map((reply, index) => (
-                <DiscussionReply key={index} {...reply} />
-              ))}
-            </div>
-          </section>
+          <DiscussionView
+            discussionDetails={discussionDetails}
+            session={session}
+            replies={JSON.parse(JSON.stringify(replies))}
+          />
         </div>
       </div>
     </>
@@ -107,102 +100,3 @@ function AutoBreadcrumb({
     </Breadcrumb>
   );
 }
-
-export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
-  name,
-  avatar,
-  content,
-  category,
-  replies,
-  views,
-}) => {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage alt={name} src={avatar} />
-            <AvatarFallback>{name[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium">{name}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {category}
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <h1 className="text-3xl font-bold">{content}</h1>
-      </CardContent>
-      <CardFooter>
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <MessageCircleIcon className="h-4 w-4" />
-          <span>{replies} replies</span>
-          <Separator className="h-4" orientation="vertical" />
-          <EyeIcon className="h-4 w-4" />
-          <span>{views} views</span>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="outline">Reply</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Reply to discussion</DrawerTitle>
-                <DrawerDescription>
-                  Share your thoughts and advice with the community.
-                </DrawerDescription>
-              </DrawerHeader>
-              <div className="grid gap-4 py-4">
-                <Textarea
-                  className="p-4 min-h-[200px]"
-                  placeholder="Type your reply here..."
-                />
-              </div>
-              <DrawerFooter>
-                <Button type="submit">Submit</Button>
-                <DrawerClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DrawerClose>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-        </div>
-      </CardFooter>
-    </Card>
-  );
-};
-
-export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
-  name,
-  avatar,
-  origin,
-  content,
-  date,
-}) => {
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage alt={name} src={avatar} />
-            <AvatarFallback>{name[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium">{name}</div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Blockquote>{origin}</Blockquote>
-        <p className="text-gray-500 dark:text-gray-400">{content}</p>
-      </CardContent>
-      <CardFooter>
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <ClockIcon className="h-4 w-4" />
-          <span>{date}</span>
-        </div>
-      </CardFooter>
-    </Card>
-  );
-};

@@ -1,20 +1,20 @@
 "use client";
 
 import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuList,
 } from "@ui/components/ui/navigation-menu";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
 } from "@ui/components/ui/sheet";
 import { useState } from "react";
 
-import { routeList } from "@/lib/constants";
+import { routeList, sidebarNavItems } from "@/app/lib/constants";
 import { Button } from "@ui/components/ui/button";
 
 import { Icons } from "@/components/icons";
@@ -23,17 +23,20 @@ import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "@ui/components/ui/button";
 import { cn } from "@ui/lib/utils";
 import { BrainCog, Menu } from "lucide-react";
-import { sidebarNavItems } from "../app/platform/layout";
 import { SidebarNav } from "./nav-links";
 
-export function Navbar() {
+interface JWTPayload {
+  userId: string;
+  iat: number;
+  exp: number;
+}
+
+export function Navbar({ session }: { session: JWTPayload | null }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <header className="sticky md:relative top-0 z-40 ml-8 w-full bg-transparent backdrop-blur-lg flex justify-between items-center p-8 -mb-12 lg:mb-12">
-      <NavigationMenu
-        className={cn("flex justify-between items-center w-full max-w-full")}
-      >
-        <div className="flex justify-start md:mx-28">
+    <header className="sticky md:relative top-0 z-40 bg-transparent backdrop-blur-lg flex justify-center items-center p-8">
+      <NavigationMenu>
+        <div className="flex justify-start">
           <Icons.logo className="text-orange-600 mt-1" />
           <a href="/" className="ml-1 font-bold text-xl flex">
             BeavBright
@@ -81,7 +84,7 @@ export function Navbar() {
           </Sheet>
         </div>
         {/* desktop */}
-        <NavigationMenuList className="hidden md:flex justify-center items-center w-full">
+        <NavigationMenuList className="hidden md:flex justify-center items-center w-full mx-12">
           {routeList.map((route, i) => (
             <a
               href={route.href}
@@ -96,14 +99,38 @@ export function Navbar() {
         </NavigationMenuList>
         <div className="hidden md:flex justify-end mx-12">
           <NavigationMenuItem className="flex items-center justify-end gap-2">
-            <a
-              href="/login"
-              className={`w-fit text-xl ${buttonVariants({
-                variant: "ghost",
-              })}`}
-            >
-              Login
-            </a>
+            {session.userId ? (
+              <>
+                <a
+                  href="/platform"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Dashboard
+                              </a>
+                <a
+                  href="/logout"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Logout
+                </a>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/login"
+                  className={`w-fit text-xl ${buttonVariants({
+                    variant: "ghost",
+                  })}`}
+                >
+                  Login
+                </a>
+              </>
+            )}
+
             <ModeToggle />
           </NavigationMenuItem>
         </div>
