@@ -26,8 +26,8 @@
         "next": "^14.2.3",
         "next-auth": "5.0.0-beta.18",
         "next-themes": "^0.3.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
         "react-hook-form": "^7.51.3",
         "sonner": "^1.4.41",
         "ui": "workspace:*",
@@ -36,13 +36,13 @@
     },
     "devDependencies": {
         "@types/node": "^17.0.12",
-        "@types/react": "^18.0.22",
-        "@types/react-dom": "^18.0.7",
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
         "autoprefixer": "^10.4.14",
         "eslint-config-custom": "workspace:*",
         "postcss": "^8.4.24",
         "tailwindcss": "^3.3.2",
         "tsconfig": "workspace:*",
-        "typescript": "^5.0.4"
+        "typescript": "^5.4.5"
     }
 }
