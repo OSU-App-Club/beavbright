@@ -128,14 +128,6 @@ export function Navbar({ session }: { session: JWTPayload | null }) {
                 >
                   Login
                 </a>
-                <a
-                  href="/register"
-                  className={`w-fit text-xl ${buttonVariants({
-                    variant: "ghost",
-                  })}`}
-                >
-                  Register
-                </a>
               </>
             )}
 
