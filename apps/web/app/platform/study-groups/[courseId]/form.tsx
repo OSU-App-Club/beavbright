@@ -22,8 +22,10 @@ import {
 } from "@ui/components/ui/form";
 import { Input } from "@ui/components/ui/input";
 import { Plus } from "lucide-react";
+import { useHMSActions } from "@100mslive/react-sdk";
 
-export default function RoomForm() {
+export default function RoomForm({ roomCode }) {
+  const hmsActions = useHMSActions();
   const formSchema = z.object({
     name: z.string().min(2).max(50),
     description: z.string(),
@@ -33,8 +35,26 @@ export default function RoomForm() {
     resolver: zodResolver(formSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await hmsActions
+      .getAuthTokenByRoomCode({ roomCode })
+      .then(async (token) => {
+        const response = await fetch("https://api.100ms.live/v2/rooms", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            data: {
+              name: values.name,
+              description: values.description,
+            },
+          }),
+        });
+
+        console.log(response);
+      });
   }
 
   return (
