@@ -27,7 +27,7 @@ export function StudySession({ session }: { session: Session }) {
         hmsActions.leave();
       }
     };
-  }, [isConnected]);
+  }, [isConnected, hmsActions]);
 
   // TODO: Fix "leave room" bug
   useEffect(() => {
@@ -42,7 +42,7 @@ export function StudySession({ session }: { session: Session }) {
         }
       }
     })();
-  }, [isConnected]);
+  }, [isConnected, hmsActions, roomCode, session.user?.name]);
 
   return (
     <div className="flex flex-col h-full">

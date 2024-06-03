@@ -124,7 +124,7 @@ export function VideoBox({ session }: { session: Session }) {
   useEffect(() => {
     window.addEventListener("beforeunload", () => hmsActions.leave());
     window.addEventListener("onunload", () => hmsActions.leave());
-  }, []);
+  }, [hmsActions]);
 
   return (
     <>

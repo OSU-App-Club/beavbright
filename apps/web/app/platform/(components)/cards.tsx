@@ -228,8 +228,8 @@ export function YourCourses() {
       <Card className="rounded-lg shadow-md p-4">
         <h2 className="text-lg font-semibold">Your Courses</h2>
         <div className="grid gap-2 mt-2">
-          <CourseCard />
-          <CourseCard />
+          {/* <CourseCard />
+          <CourseCard /> */}
         </div>
       </Card>
     </div>
@@ -305,9 +305,9 @@ export function CourseCard({ course }: { course: Course }) {
 }
 
 export function RoomCard({ room }: RoomCardProps) {
-  if (!room.codes) return null;
   const router = useRouter();
   const { courseId } = useParams<{ courseId: string }>();
+  if (!room.codes) return null;
   return (
     <main>
       <Card>
@@ -357,7 +357,7 @@ export function DiscussionCard({
   const [newContent, setNewContent] = useState(discussion.body);
   const [loading, setLoading] = useState(false);
   const [newTitle, setNewTitle] = useState(discussion.title);
-
+  const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState(discussion.category);
   const name = discussion.poster.firstName + " " + discussion.poster.lastName;
   const onSubmitTrash = async () => {
@@ -382,8 +382,6 @@ export function DiscussionCard({
     setLoading(false);
     setError(null);
   };
-
-  const [error, setError] = useState(null);
 
   const onViewDiscussion = async () => {
     await viewDiscussionPost(discussion.id);
@@ -612,7 +610,7 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
       }, 4000);
       return;
     } else {
-      onAddReply(reply);
+      onAddReply && onAddReply(reply);
       setLoading(false);
       setOpen(false);
       setReply("");
@@ -733,7 +731,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
       }, 4000);
       return;
     } else {
-      onAddReply(reply, id);
+      onAddReply && onAddReply(reply, id);
       setLoading(false);
       setOpen(false);
       setReply("");
@@ -769,7 +767,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                   size="sm"
                   variant="outline"
                   className="h-8 gap-1"
-                  onClick={() => onDeleteReply(id)}
+                  onClick={() => onDeleteReply && onDeleteReply(id)}
                 >
                   <Trash className="h-3.5 w-3.5" />
                   <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
@@ -815,7 +813,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                 size="sm"
                 variant="outline"
                 className="ml-auto h-8 gap-1"
-                onClick={() => onAddReply(reply, id)}
+                onClick={() => onAddReply && onAddReply(reply, id)}
               >
                 <Reply className="h-3.5 w-3.5" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">

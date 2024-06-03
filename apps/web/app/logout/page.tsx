@@ -15,7 +15,7 @@ const logOut = async (host: string) => {
 
 export default async function LogoutPage() {
   const host = headers().get("host");
-  await logOut(host);
+  await logOut(host ?? "");
   return (
     <>
       <div className="flex items-center justify-center py-24 px-4 md:px-6">

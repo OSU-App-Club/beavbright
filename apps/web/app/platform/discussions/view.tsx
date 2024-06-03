@@ -129,7 +129,8 @@ export default function View({
         category,
         userId: session.userId,
       });
-      setDiscussions((prev) => [newDiscussion, ...prev]);
+      //   TODO: Address these type mismatches by removing "as Discussion[]"
+      setDiscussions((prev) => [newDiscussion, ...prev] as Discussion[]);
       setTitle("");
       setContentText("");
       setCategory("");
