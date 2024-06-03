@@ -10,10 +10,15 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@100mslive/react-sdk": "^0.10.10",
+        "@auth/prisma-adapter": "^2.1.0",
         "@blocknote/core": "^0.12.4",
         "@blocknote/react": "^0.12.4",
+        "@hookform/resolvers": "^3.3.4",
+        "@prisma/client": "5.5.2",
         "@radix-ui/react-icons": "^1.3.0",
         "@tanstack/react-table": "^8.10.7",
+        "axios": "^1.6.8",
         "bcrypt-ts": "^5.0.2",
         "database": "workspace:*",
         "date-fns": "^3.6.0",
@@ -21,21 +26,24 @@
         "jose": "^5.2.4",
         "lucide-react": "0.289.0",
         "next": "^14.2.3",
+        "next-auth": "5.0.0-beta.18",
         "next-themes": "^0.3.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-hook-form": "^7.51.3",
         "sonner": "^1.4.41",
-        "ui": "workspace:*"
+        "ui": "workspace:*",
+        "zod": "^3.23.4"
     },
     "devDependencies": {
         "@types/node": "^17.0.12",
-        "@types/react": "^18.0.22",
-        "@types/react-dom": "^18.0.7",
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
         "autoprefixer": "^10.4.14",
         "eslint-config-custom": "workspace:*",
         "postcss": "^8.4.24",
         "tailwindcss": "^3.3.2",
         "tsconfig": "workspace:*",
-        "typescript": "^5.0.4"
+        "typescript": "^5.4.5"
     }
 }

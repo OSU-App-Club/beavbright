@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { acceptCookies } from "@/app/lib/actions";
+import { Button } from "@ui/components/ui/button";
+import { useState } from "react";
 
-const CookieModal = () => {
-  const [showModal, setShowModal] = useState(true);
+const CookieModal = ({ show }: { show: boolean }) => {
+  const [showModal, setShowModal] = useState(show);
 
   const handleAcceptCookies = async () => {
     await acceptCookies(); // Call the server action to update the session
@@ -14,7 +15,7 @@ const CookieModal = () => {
   return (
     <div className="w-full right-0 fixed bottom-0 pl-[55px]">
       <div
-        className={` m-auto bg-gray-800 text-white p-4 transition-transform transform ${
+        className={` m-auto bg-background border-t-2 dark:brightness-150 p-4 transition-transform transform ${
           showModal ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ transition: "transform 0.3s ease-in-out" }}
@@ -27,12 +28,7 @@ const CookieModal = () => {
             </p>
           </div>
           <div>
-            <button
-              className="bg-orange-500 text-white py-2 px-4 rounded"
-              onClick={handleAcceptCookies}
-            >
-              Accept
-            </button>
+            <Button onClick={handleAcceptCookies}>Accept</Button>
           </div>
         </div>
       </div>
