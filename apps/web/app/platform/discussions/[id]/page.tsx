@@ -1,3 +1,4 @@
+import prisma from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import { SlashIcon } from "@radix-ui/react-icons";
 import {
@@ -14,6 +15,9 @@ import { DiscussionView } from "../view";
 export default async function Component() {
   const headersObj = headers();
   const discussionId = headersObj.get("discussionId");
+  if (!discussionId) {
+    throw new Error("No discussion found.");
+  }
   const discussionDetails = await prisma.discussion.findUnique({
     where: { id: discussionId },
     include: {
@@ -32,6 +36,9 @@ export default async function Component() {
       createdAt: "asc",
     },
   });
+  if (!discussionDetails) {
+    throw new Error("Discussion not found");
+  }
   const session = await getSession();
 
   const breadcrumbs = [
@@ -60,7 +67,8 @@ export default async function Component() {
             </nav>
           </div>
           <DiscussionView
-            discussionDetails={discussionDetails}
+            //   TODO: Fix this by adding the correct types
+            discussionDetails={discussionDetails as any}
             session={session}
             replies={JSON.parse(JSON.stringify(replies))}
           />

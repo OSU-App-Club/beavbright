@@ -1,13 +1,18 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
+import { JoinCourseFields, type RoomCode } from "@/app/lib/types";
+import axios from "axios";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
-import { createSession, updateSession, getSession } from "./session";
+import { signOut } from "../auth";
+import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
+import { createSession, getSession, updateSession } from "./session";
 import {
+  CourseFields,
   CreateReplyFields,
   LoginFields,
-  CourseFields,
+  RoomData,
   RoomFields,
 } from "./types";
 
@@ -35,6 +40,10 @@ export async function authorizeUser(email: string, password: string) {
     throw new Error("Incorrect email or password");
   }
 
+  if (!user.password) {
+    throw new Error("Incorrect email or password");
+  }
+
   if (!compareSync(password, user.password)) {
     throw new Error("Incorrect email or password");
   }
@@ -44,19 +53,74 @@ export async function authorizeUser(email: string, password: string) {
   return { success: true };
 }
 
-export async function createCourse(data: CourseFields) {
+export async function createCourse(data: JoinCourseFields) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-
   const { subject, code, title } = data;
   await prisma.course.create({
     data: {
       subject,
       code,
       title,
+      User: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
     },
   });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
 
+export async function createStudyGroup(data: CourseFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  const { course, users } = data;
+  await prisma.course.update({
+    where: { id: course },
+    data: {
+      User: {
+        connect: users.map((user) => ({ id: user.value })),
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function leaveStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        disconnect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function joinStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  revalidatePath("/platform/courses");
   return { success: true };
 }
 
@@ -143,9 +207,9 @@ export async function createChildReply(data: CreateReplyFields) {
 export async function deleteDiscussionReply(id: string) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-
-  const dicussionId = (await prisma.reply.findUnique({ where: { id } }))
-    .discussionId;
+  const dicussionReply = await prisma.reply.findUnique({ where: { id } });
+  if (!dicussionReply) throw new Error("Reply not found");
+  const dicussionId = dicussionReply.discussionId;
   await prisma.reply.delete({ where: { id } });
   await prisma.discussion.update({
     where: { id: dicussionId },
@@ -212,6 +276,8 @@ export async function editDiscussion(
   revalidatePath("/platform/discussions");
 }
 
+// TODO: Persist the 100ms room data to the database
+/*
 export async function createRoom(data: RoomFields) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
@@ -220,7 +286,7 @@ export async function createRoom(data: RoomFields) {
   const room = await prisma.room.create({
     data: {
       name,
-      description,
+      description: description ?? "",
       course: {
         connect: {
           id: courseId,
@@ -242,6 +308,7 @@ export async function createRoom(data: RoomFields) {
 
   return room;
 }
+*/
 
 export async function deleteRoom(id: string, subject: string, code: number) {
   const session = await getSession();
@@ -286,4 +353,109 @@ export async function viewDiscussionPost(id: string) {
 
 export async function acceptCookies() {
   await updateSession({ cookiesAccepted: true });
+}
+
+export async function createHmsRoom(
+  data: RoomData,
+  courseId: string
+): Promise<PrismaRoom> {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description } = data;
+  const token = process.env.HMS_MANAGEMENT_TOKEN;
+  const templateId = process.env.HMS_TEMPLATE_ID;
+
+  try {
+    const response = await axios.post(
+      `https://api.100ms.live/v2/rooms`,
+      {
+        name,
+        description,
+        template_id: templateId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const roomId: string = response.data.id;
+    const roomData = await axios.get(
+      `https://api.100ms.live/v2/rooms/${roomId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const roomDetails = roomData.data;
+    const roomCode = await createRoomCode(roomDetails.id);
+
+    const room = await prisma.room.create({
+      data: {
+        name: roomDetails.name,
+        description: roomDetails.description,
+        hmsId: roomDetails.id,
+        creator: {
+          connect: {
+            id: session.user?.id,
+          },
+        },
+        course: {
+          connect: {
+            id: courseId,
+          },
+        },
+        hmsCode: {
+          createMany: {
+            data: roomCode.map((code) => ({
+              code: code.code,
+              role: code.role,
+              enabled: code.enabled,
+            })),
+          },
+        },
+      },
+      include: {
+        hmsCode: true,
+      },
+    });
+    return room;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create room");
+  }
+}
+
+export async function createRoomCode(roomId: string): Promise<RoomCode[]> {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  const token = process.env.HMS_MANAGEMENT_TOKEN;
+
+  try {
+    const response = await axios.post(
+      `https://api.100ms.live/v2/room-codes/room/${roomId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create room code");
+  }
+}
+
+export async function logOutUser() {
+  try {
+    await signOut();
+  } catch (error: any) {
+    return error;
+  }
 }

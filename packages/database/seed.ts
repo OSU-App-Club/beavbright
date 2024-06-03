@@ -34,10 +34,11 @@ async function main() {
   for (let i = 0; i < numberOfUsers; i++) {
     const user = await prisma.user.create({
       data: {
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
+        name: faker.person.fullName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        image:
+          "https://lh3.googleusercontent.com/a/ACg8ocJkHQ6wtbjTPDHKMErXe4KKO332jRZ-KjNoMixsl-QvahhfaCY=s96-c",
         avatar: faker.image.avatar(),
         Course: {
           connect: [discrete, dataStructures, webDev][i % 3],

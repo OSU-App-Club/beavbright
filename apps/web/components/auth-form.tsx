@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { authorizeUser, createUser } from "@/app/lib/actions";
 import { Button } from "@ui/components/ui/button";
 import {
@@ -14,10 +12,13 @@ import {
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import { cn } from "@ui/lib/utils";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Icons } from "./icons";
+
+// TODO: Remove "any" annotation from error catch clause
 
 export function RegisterForm() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export function RegisterForm() {
       setLoading(false);
       toast.success("Account created successfully");
       router.push("/login");
-    } catch (error) {
+    } catch (error: any) {
       if (
         error.message.includes(
           "Unique constraint failed on the fields: (`email`)"
@@ -193,7 +194,7 @@ export function LoginForm() {
       setLoading(false);
       toast.success("Logged in successfully");
       router.push("/platform");
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
       setError(error.message);
     }

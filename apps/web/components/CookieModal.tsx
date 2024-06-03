@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { acceptCookies } from "@/app/lib/actions";
 import { Button } from "@ui/components/ui/button";
+import { useState } from "react";
 
-const CookieModal = ({ show }) => {
+const CookieModal = ({ show }: { show: boolean }) => {
   const [showModal, setShowModal] = useState(show);
 
   const handleAcceptCookies = async () => {
