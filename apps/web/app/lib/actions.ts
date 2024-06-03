@@ -5,6 +5,7 @@ import { type RoomCode } from "@/app/lib/types";
 import axios from "axios";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
+import { signOut } from "../auth";
 import { createSession, getSession, updateSession } from "./session";
 import {
   CourseFields,
@@ -362,5 +363,13 @@ export async function createRoomCode(roomId: string): Promise<RoomCode[]> {
   } catch (error) {
     console.error(error);
     throw new Error("Failed to create room code");
+  }
+}
+
+export async function logOutUser() {
+  try {
+    await signOut();
+  } catch (error: any) {
+    return error;
   }
 }
