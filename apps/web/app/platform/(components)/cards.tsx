@@ -397,11 +397,11 @@ export function DiscussionCard({
   const [newTitle, setNewTitle] = useState(discussion.title);
   const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState(discussion.category);
-  const name = discussion.poster.firstName + " " + discussion.poster.lastName;
+  const name = discussion.poster.name;
+  const image = discussion.poster.image;
   const onSubmitTrash = async () => {
     await deleteDiscussison(discussion.id);
   };
-
   const onSubmitEdit = async () => {
     if (!newContent || !newTitle || !newCategory) {
       setError("Please fill in all fields.");
@@ -446,8 +446,7 @@ export function DiscussionCard({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage alt={name} src={discussion.poster.avatar} />
-              {/* initials */}
+              <AvatarImage src={image} />
               <AvatarFallback>
                 {name.charAt(0) + name.split(" ")[1].charAt(0)}
               </AvatarFallback>
@@ -624,7 +623,7 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
   discussion,
   onAddReply,
 }) => {
-  const { firstName, lastName, avatar } = discussion.poster;
+  const { name, image } = discussion.poster;
   const {
     body: content,
     category,
@@ -654,19 +653,17 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
       setReply("");
     }
   };
+  console.log(image);
   return (
     <Card id={`reply-${discussionId}`}>
       <CardHeader>
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage
-              alt={firstName + " " + lastName + "'s image"}
-              src={avatar}
-            />
-            <AvatarFallback>{firstName[0] + lastName[0]}</AvatarFallback>
+            <AvatarImage src={image} />
+            <AvatarFallback>{name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <div className="font-medium">{firstName + " " + lastName}</div>
+            <div className="font-medium">{name}</div>
             <div className="text-sm mt-2 text-gray-500 dark:text-gray-400">
               {category}
             </div>
@@ -756,7 +753,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
   const [loading, setLoading] = useState(false);
   const [reply, setReply] = useState("");
   const [open, setOpen] = useState(false);
-  const { firstName, lastName, avatar } = poster;
+  const { image, name } = poster;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -790,14 +787,11 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                alt={firstName + " " + lastName + "'s image"}
-                src={avatar}
-              />
-              <AvatarFallback>{firstName[0] + lastName[0]}</AvatarFallback>
+              <AvatarImage alt={name} src={image} />
+              <AvatarFallback>{name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-medium">{firstName + " " + lastName}</div>
+              <div className="font-medium">{name}</div>
             </div>
             {poster.id === session.userId && (
               <div className="ml-auto flex items-center gap-2">
@@ -824,8 +818,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                 href={`/platform/discussions/${discussion.id}#reply-${id}`}
               >
                 {format(createdAt, "'On' MMMM dd, yyyy 'at' h:mm a")}{" "}
-                {poster.firstName}
-                {poster.lastName} wrote:
+                {poster.name} wrote:
               </Link>
               <h2 className="text-lg font-semibold -translate-y-1 text-muted-foreground/90">
                 {discussion.title}

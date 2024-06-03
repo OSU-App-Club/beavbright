@@ -2,13 +2,20 @@ import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
 
 export interface User {
   id: string;
+  name: string;
+  email: string;
+  emailVerified: Date;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
   firstName: string;
   lastName: string;
-  email: string;
   password: string;
   avatar: string;
+  lastLogin: Date;
+  Discussion?: Discussion[];
+  Reply?: Reply[];
 }
-
 export interface MessaageBoxProps {
   sender: string;
   message: string;

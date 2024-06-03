@@ -16,7 +16,7 @@ export default async function Component() {
   const headersObj = headers();
   const discussionId = headersObj.get("discussionId");
   if (!discussionId) {
-    throw new Error("No discussion ID provided");
+    throw new Error("No discussion found.");
   }
   const discussionDetails = await prisma.discussion.findUnique({
     where: { id: discussionId },
