@@ -8,25 +8,25 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  firstName  String?
-  lastName   String?
-  password   String?
-  avatar     String?
-  lastLogin  DateTime?
-  Discussion Discussion[]
-  Reply      Reply[]
-  Course     Course[]
-  RoomCreated Room[]      @relation("CreatorOfRoom")
-  RoomUser    Room[]      @relation("UserInRoom")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  firstName     String?
+  lastName      String?
+  password      String?
+  avatar        String?
+  lastLogin     DateTime?
+  Discussion    Discussion[]
+  Reply         Reply[]
+  Course        Course[]
+  RoomCreated   Room[]       @relation("CreatorOfRoom")
+  RoomUser      Room[]       @relation("UserInRoom")
 }
 
 model Account {
@@ -82,45 +82,45 @@ model Discussion {
 }
 
 model Reply {
-    id           String     @id @default(cuid())
-    createdAt    DateTime   @default(now())
-    body         String
-    discussionId String     @map("discussionId")
-    posterId     String     @map("posterId")
-    discussion   Discussion @relation(fields: [discussionId], references: [id])
-    poster       User       @relation(fields: [posterId], references: [id])
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  body         String
+  discussionId String     @map("discussionId")
+  posterId     String     @map("posterId")
+  discussion   Discussion @relation(fields: [discussionId], references: [id])
+  poster       User       @relation(fields: [posterId], references: [id])
 }
 
 model Course {
-    id           String     @id @default(cuid())
-    createdAt    DateTime   @default(now())
-    subject      String
-    code         Int        @default(0)
-    title        String
-    User         User[]
-    Room         Room[]
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  subject   String
+  code      Int      @default(0)
+  title     String
+  User      User[]
+  Room      Room[]
 }
 
 model Room {
-    id           String     @id @default(cuid())
-    createdAt    DateTime   @default(now())
-    name         String
-    description  String
-    courseId     String     @map("courseId")
-    course       Course     @relation(fields: [courseId], references: [id])
-    creatorId    String     @map("creatorId")
-    creator      User       @relation(fields: [creatorId], references: [id], name: "CreatorOfRoom")
-    User         User[]     @relation("UserInRoom")
-    hmsCode      RoomCode[]
-    hmsId        String     @map("hmsId")
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  name        String
+  description String
+  courseId    String     @map("courseId")
+  course      Course     @relation(fields: [courseId], references: [id])
+  creatorId   String     @map("creatorId")
+  creator     User       @relation(fields: [creatorId], references: [id], name: "CreatorOfRoom")
+  User        User[]     @relation("UserInRoom")
+  hmsCode     RoomCode[]
+  hmsId       String     @map("hmsId")
 }
 
 model RoomCode {
-    id           String     @id @default(cuid())
-    createdAt    DateTime   @default(now())
-    code         String
-    roomId       String     @map("roomId")
-    room         Room       @relation(fields: [roomId], references: [id])
-    role         String
-    enabled      Boolean
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  code      String
+  roomId    String   @map("roomId")
+  room      Room     @relation(fields: [roomId], references: [id])
+  role      String
+  enabled   Boolean
 }
