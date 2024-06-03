@@ -111,4 +111,16 @@ model Room {
     creatorId    String     @map("creatorId")
     creator      User       @relation(fields: [creatorId], references: [id], name: "CreatorOfRoom")
     User         User[]     @relation("UserInRoom")
+    hmsCode      RoomCode[]
+    hmsId        String     @map("hmsId")
+}
+
+model RoomCode {
+    id           String     @id @default(cuid())
+    createdAt    DateTime   @default(now())
+    code         String
+    roomId       String     @map("roomId")
+    room         Room       @relation(fields: [roomId], references: [id])
+    role         String
+    enabled      Boolean
 }
