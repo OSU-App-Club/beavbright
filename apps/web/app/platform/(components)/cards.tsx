@@ -3,11 +3,12 @@ import {
   DiscussionCardProps,
   DiscussionOpenerProps,
   DiscussionReply,
+  RoomCardProps,
   SessionObject,
 } from "@/app/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
-import { Button } from "@ui/components/ui/button";
 import { Badge } from "@ui/components/ui/badge";
+import { Button } from "@ui/components/ui/button";
 import { format } from "date-fns";
 
 import {
@@ -64,6 +65,16 @@ import {
 } from "@/app/lib/actions";
 import { Blockquote } from "@ui/components/ui/blockquote";
 import { CardDescription, CardTitle } from "@ui/components/ui/card";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@ui/components/ui/drawer";
 import { DropdownMenuItem } from "@ui/components/ui/dropdown-menu";
 import {
   Select,
@@ -75,19 +86,9 @@ import {
 import { cn } from "@ui/lib/utils";
 import { useState } from "react";
 
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@ui/components/ui/drawer";
-
 import { Icons } from "@/components/icons";
 import { Textarea } from "@ui/components/ui/textarea";
+import { Course } from "database";
 import { ClockIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -235,13 +236,15 @@ export function YourCourses() {
   );
 }
 
-export function CourseCard() {
+export function CourseCard({ course }: { course: Course }) {
   return (
     <Card>
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
         <div className="space-y-1">
-          <CardTitle>CS 161</CardTitle>
-          <CardDescription>Introduction to Computer Science</CardDescription>
+          <CardTitle>
+            {course.subject} {course.code}
+          </CardTitle>
+          <CardDescription>{course.title}</CardDescription>
         </div>
         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
           <Button variant="secondary" className="px-3 shadow-none">
@@ -288,7 +291,10 @@ export function CourseCard() {
           <div>Spring 2022</div>
         </div>
         <div className="flex flex-row space-x-3">
-          <Link href="study-groups/cs161" className="w-full">
+          <Link
+            href={`/platform//study-groups/${course.id}`}
+            className="w-full"
+          >
             <Button className="w-full">Enter</Button>
           </Link>
           <Button className="w-full">Leave</Button>
@@ -298,7 +304,10 @@ export function CourseCard() {
   );
 }
 
-export function RoomCard() {
+export function RoomCard({ room }: RoomCardProps) {
+  if (!room.codes) return null;
+  const router = useRouter();
+  const { courseId } = useParams<{ courseId: string }>();
   return (
     <main>
       <Card>
@@ -309,15 +318,28 @@ export function RoomCard() {
               <ChatBubbleIcon className="w-5 h-5" />
               <Mic className="w-5 h-5" />
             </div>
-            <Badge className="bg-green-500">Live</Badge>
+            <Badge
+              variant={room.enabled ? "outline" : "destructive"}
+              className="text-xs"
+            >
+              {room.enabled ? "Active" : "Offline"}
+            </Badge>
           </div>
-          <CardTitle className="text-2xl">MTH 242 Study Session</CardTitle>
-          <CardDescription>Join the MTH 242 study session</CardDescription>
-          <div className="flex flex-row space-x-3">
-            <Link href="cs161/123x" className="w-full">
-              <Button className="w-full">Join</Button>
-            </Link>
-            <Button className="w-full">Leave</Button>
+          <CardTitle className="text-2xl truncate">{room.name}</CardTitle>
+          <CardDescription>{room.description}</CardDescription>
+          <div className="flex flex-row mt-4 gap-2">
+            {room.codes?.map((code) => (
+              <Button
+                key={code.code}
+                variant="outline"
+                onClick={() =>
+                  router.push(`/platform/study-groups/${courseId}/${code.code}`)
+                }
+              >
+                <EnterIcon className="w-4 h-4 mr-2" />
+                {code.role}
+              </Button>
+            ))}
           </div>
         </CardHeader>
       </Card>
@@ -576,9 +598,9 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
     title,
   } = discussion;
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [reply, setReply] = useState("");
-  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [reply, setReply] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);

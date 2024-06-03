@@ -6,7 +6,8 @@
         "name": "next"
       }
     ],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strict": true
   },
   "include": [
     "next-env.d.ts",
@@ -15,7 +16,5 @@
     ".next/types/**/*.ts",
     "app/auth.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

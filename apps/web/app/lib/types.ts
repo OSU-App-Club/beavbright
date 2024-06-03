@@ -94,3 +94,72 @@ export type RoomFields = {
   subject: string;
   code: number;
 };
+
+export type RoomData = {
+  name: string;
+  description: string;
+};
+
+export type RoomResponse = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+  customer_id: string;
+  app_id: string;
+  recording_info: {
+    enabled: boolean;
+  };
+  template_id: string;
+  template: string;
+  region: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RoomCreateError = {
+  code: number;
+  message: string;
+  details: string[];
+};
+
+export type HmsRoom = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+  customer_id: string;
+  recording_source_template: boolean;
+  template_id: string;
+  template: string;
+  region: string;
+  created_at: string;
+  key: string;
+  updated_at: string;
+  large_room: boolean;
+  max_duration_seconds: number;
+  recording?: {
+    enabled: boolean;
+  };
+  size?: number;
+  codes?: RoomCode[];
+};
+
+export interface RoomCardProps {
+  room: HmsRoom;
+}
+
+export type RoomCode = {
+  code: string;
+  room_id: string;
+  role: string;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ListRoomsResponse = {
+  limit: number;
+  data: HmsRoom[];
+  last: string;
+};
