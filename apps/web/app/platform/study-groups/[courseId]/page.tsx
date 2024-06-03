@@ -1,3 +1,4 @@
+import prisma from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import { ListRoomsResponse } from "@/app/lib/types";
 import axios from "axios";
@@ -40,7 +41,23 @@ async function getRooms(courseId: string) {
         codes: codes[index],
       };
     });
+
     return roomsWithCodes;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get rooms");
+  }
+}
+
+async function getRoomsByCourse(courseId: string) {
+  try {
+    const rooms = await prisma.room.findMany({
+      where: { courseId },
+      include: {
+        hmsCode: true,
+      },
+    });
+    return rooms;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to get rooms");
@@ -53,10 +70,11 @@ export default async function RoomPage({
   params: { courseId: string };
 }) {
   const rooms = await getRooms(params.courseId);
+  const courseRooms = await getRoomsByCourse(params.courseId);
   return (
     <>
       <main>
-        <ListRooms serverRooms={rooms} />
+        <ListRooms serverRooms={courseRooms} />
       </main>
     </>
   );

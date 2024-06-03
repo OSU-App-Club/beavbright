@@ -1,3 +1,5 @@
+import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
+
 export interface User {
   id: string;
   firstName: string;
@@ -80,10 +82,19 @@ export type CreateReplyFields = {
   replyId?: string;
 };
 
-export type CourseFields = {
-  subject: string;
+export type JoinCourseFields = {
   code: number;
+  subject: string;
   title: string;
+};
+
+export type CourseFields = {
+  course: string;
+  users: {
+    label: string;
+    value: string;
+    disable?: boolean | undefined;
+  }[];
 };
 
 export type RoomFields = {
@@ -146,7 +157,7 @@ export type HmsRoom = {
 };
 
 export interface RoomCardProps {
-  room: HmsRoom;
+  room: PrismaRoom;
 }
 
 export type RoomCode = {

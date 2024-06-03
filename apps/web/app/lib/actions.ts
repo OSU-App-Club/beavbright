@@ -1,16 +1,16 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
-import { type RoomCode } from "@/app/lib/types";
+import { JoinCourseFields, type RoomCode } from "@/app/lib/types";
 import axios from "axios";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
 import { signOut } from "../auth";
+import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
 import { createSession, getSession, updateSession } from "./session";
 import {
   CourseFields,
   CreateReplyFields,
-  HmsRoom,
   LoginFields,
   RoomData,
   RoomFields,
@@ -53,19 +53,74 @@ export async function authorizeUser(email: string, password: string) {
   return { success: true };
 }
 
-export async function createCourse(data: CourseFields) {
+export async function createCourse(data: JoinCourseFields) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-
   const { subject, code, title } = data;
   await prisma.course.create({
     data: {
       subject,
       code,
       title,
+      User: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
     },
   });
   revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function createStudyGroup(data: CourseFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  const { course, users } = data;
+  await prisma.course.update({
+    where: { id: course },
+    data: {
+      User: {
+        connect: users.map((user) => ({ id: user.value })),
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function leaveStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        disconnect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function joinStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  revalidatePath("/platform/courses");
   return { success: true };
 }
 
@@ -300,7 +355,10 @@ export async function acceptCookies() {
   await updateSession({ cookiesAccepted: true });
 }
 
-export async function createHmsRoom(data: RoomData): Promise<HmsRoom> {
+export async function createHmsRoom(
+  data: RoomData,
+  courseId: string
+): Promise<PrismaRoom> {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
@@ -335,11 +393,39 @@ export async function createHmsRoom(data: RoomData): Promise<HmsRoom> {
 
     const roomDetails = roomData.data;
     const roomCode = await createRoomCode(roomDetails.id);
-    return {
-      ...roomDetails,
-      codes: roomCode,
-    } as HmsRoom;
+
+    const room = await prisma.room.create({
+      data: {
+        name: roomDetails.name,
+        description: roomDetails.description,
+        hmsId: roomDetails.id,
+        creator: {
+          connect: {
+            id: session.user?.id,
+          },
+        },
+        course: {
+          connect: {
+            id: courseId,
+          },
+        },
+        hmsCode: {
+          createMany: {
+            data: roomCode.map((code) => ({
+              code: code.code,
+              role: code.role,
+              enabled: code.enabled,
+            })),
+          },
+        },
+      },
+      include: {
+        hmsCode: true,
+      },
+    });
+    return room;
   } catch (error) {
+    console.error(error);
     throw new Error("Failed to create room");
   }
 }

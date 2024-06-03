@@ -28,14 +28,16 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { PrismaRoom } from "./list";
 
 export default function RoomForm({
   onAdd,
 }: {
-  onAdd: (room: HmsRoom) => void;
+  onAdd: (room: PrismaRoom) => void;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const { courseId } = useParams<{ courseId: string }>();
   const formSchema = z.object({
     name: z.string().min(1),
     description: z.string().min(1),
@@ -48,7 +50,7 @@ export default function RoomForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      const response = await createHmsRoom(values);
+      const response = await createHmsRoom(values, courseId);
       setLoading(false);
       setOpen(false);
       toast.success("Room created successfully");
