@@ -6,6 +6,10 @@ Welcome to BeavBright! This is a monorepo for the BeavBright project, a platform
 
 BeavBright's code organization is based on this [awesome turborepo template](https://github.com/dan5py/turborepo-shadcn-ui). We have added some customizations to it to make it more suitable for our needs.
 
+## Contributors 🤝
+
+![Contributors](https://contrib.rocks/image?repo=OSU-App-Club/beavbright)
+
 ## Tech Stack 🚀
 
 - [TurboRepo](https://turbo.build/) for managing the beavbright monorepo
@@ -24,13 +28,27 @@ BeavBright's code organization is based on this [awesome turborepo template](htt
 
 ## Getting Started 🏁
 
+### Prerequisites
+
+- [dotenv-cli](https://www.npmjs.com/package/dotenv-cli) (for managing environment variables)
+- [pnpm](https://pnpm.io/) (v6 or higher)
+- [Docker](https://www.docker.com/) (for running the database)
+- [Node.js](https://nodejs.org/en/) (v14 or higher)
+- [OpenSSL](https://www.openssl.org/) (for generating JWT secrets - optional)
+
 1. Clone the repository:
 
 ```sh
 git clone https://github.com/OSU-App-Club/beavbright.git
 ```
 
-2. Create your `.env.local` files in the `packages/database` and `apps/web` directories:
+2. Install the following:
+
+```sh
+pnpm install -g dotenv-cli
+```
+
+3. Create your `.env.local` files in the `packages/database` and `apps/web` directories:
 
 ```sh
 cp packages/database/.env.example packages/database/.env.local
@@ -38,7 +56,7 @@ cp apps/web/.env.example apps/web/.env.local
 ```
 
 > [!IMPORTANT]
-> Be sure to replace the `DATABASE_URL` in `packages/database/.env.local` with your own database URL and JWT secret in `apps/web/.env.local` with your own JWT secret.
+> Be sure to replace the empty values in the `.env.local` files with your own values.
 
 > [!TIP]
 > You can generate a JWT secret by running the following command:
@@ -47,35 +65,35 @@ cp apps/web/.env.example apps/web/.env.local
 openssl rand -base64 32
 ```
 
-3. Install the dependencies:
+4. Install the dependencies:
 
 ```sh
 pnpm install
 ```
 
-4. Start the development database:
+5. Start the development database:
 
 ```sh
 docker-compose up -d postgres
 ```
 
-5. Initialize the database in one command:
+6. Initialize the database in one command:
 
 ```sh
-pnpm db:init
+pnpm --filter database db:init
 ```
 
 > [!NOTE]
 > This will start prisma studio, where you can manage your database schema.
 > For the next steps, you can close prisma studio or open a new terminal window/tab.
 
-6. Start the development server:
+7. Navigate back to the root directory and start the development server:
 
 ```sh
-pnpm dev
+pnpm run dev
 ```
 
-### Docker
+<!-- ### Docker
 
 Both the api (`api.Dockerfile`) and the web app (`web.Dockerfile`) are dockerized and managed by docker-compose (`docker-compose.yml`). You can start everything with:
 
@@ -86,11 +104,11 @@ docker-compose watch
 This will start the api, the web app, and the database. It also enables hot reloading for both the api and the web app.
 
 > [!WARNING]
-> We're still ironing out some kinks with the docker setup. If you encounter any issues, feel free to open an issue or PR.
+> We're still ironing out some kinks with the docker setup. If you encounter any issues, feel free to open an issue or PR. -->
 
 ### Database
 
-The database is a Postgres database managed by Prisma. It is reachable through this connection: `postgres://postgres:postgres@localhost:5432/beavbright` (or `DATABASE_URL` in the `.env`).
+The database is a Postgres database managed by Prisma. It is reachable through this connection: `postgres://postgres:postgres@localhost:5432/beavbright` (or `DATABASE_URL` in `.env.local`).
 
 ## What's inside? 🤔
 
@@ -105,7 +123,7 @@ Currently, the monorepo contains the following packages and applications:
 
 ### Applications 🚀
 
-- `web`: a [Next.js](https://nextjs.org/) app
+- `web`: a [Next.js 14](https://nextjs.org/) app
 - `api`: a [Hono](https://hono.dev/) app
 
 ### Notable Scripts 📜
@@ -137,7 +155,7 @@ Currently, the monorepo contains the following packages and applications:
 
 ## Credits 🙏
 
-Thank you to [dan5py](https://github.com/dan5py/turborepo-shadcn-ui) for the original template, allowing our club to build on top of it.
+Thank you to [dan5py](https://github.com/dan5py/turborepo-shadcn-ui) for the original template. This allowed our club to build on top of it.
 
 ## License 📝
 

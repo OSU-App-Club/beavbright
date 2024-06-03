@@ -1,23 +1,23 @@
 {
-    "name": "beavbright",
-    "version": "1.0.0",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "build": "turbo run build",
-        "dev": "turbo run dev",
-        "lint": "turbo run lint",
-        "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-        "ui:add": "pnpm --filter ui ui:add",
-        "db:init": "pnpm --filter database db:init"
-    },
-    "devDependencies": {
-        "@turbo/gen": "^1.9.7",
-        "eslint": "^7.32.0",
-        "eslint-config-custom": "workspace:*",
-        "prettier": "^2.5.1",
-        "prisma": "5.5.2",
-        "turbo": "latest"
-    },
-    "packageManager": "pnpm@9.1.0"
+  "name": "beavbright",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "dotenv -e packages/database/.env.local -- turbo run build",
+    "dev": "dotenv -e packages/database/.env.local -- turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "ui:add": "pnpm --filter ui ui:add",
+    "db:init": "dotenv -e packages/database/.env.local -- pnpm --filter database db:init"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.9.7",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "workspace:*",
+    "prettier": "^2.5.1",
+    "prisma": "5.5.2",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@9.1.0"
 }
