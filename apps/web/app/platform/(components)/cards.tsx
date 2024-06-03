@@ -721,7 +721,6 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
   const [reply, setReply] = useState("");
   const [open, setOpen] = useState(false);
   const { firstName, lastName, avatar } = poster;
-  console.log("poster", poster);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

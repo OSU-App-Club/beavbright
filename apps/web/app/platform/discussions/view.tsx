@@ -333,7 +333,6 @@ export function DiscussionView({
           discussionId: discussionDetails.id,
           body: reply,
         });
-        console.log("MAIN newReply:\n", newReply);
         setReplies((replies) => [...replies, newReply]);
       } else {
         const newReply = await createChildReply({
@@ -342,7 +341,6 @@ export function DiscussionView({
           body: reply,
           replyId,
         });
-        console.log("CHILD newReply:\n", newReply);
         setReplies((replies) => [...replies, newReply]);
       }
     },

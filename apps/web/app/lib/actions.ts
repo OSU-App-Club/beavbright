@@ -323,7 +323,6 @@ export async function createHmsRoom(data: RoomData): Promise<HmsRoom> {
     );
 
     const roomId: string = response.data.id;
-    console.log(roomId);
     const roomData = await axios.get(
       `https://api.100ms.live/v2/rooms/${roomId}`,
       {
@@ -335,7 +334,6 @@ export async function createHmsRoom(data: RoomData): Promise<HmsRoom> {
 
     const roomDetails = roomData.data;
     const roomCode = await createRoomCode(roomDetails.id);
-    console.log(roomDetails);
     return {
       ...roomDetails,
       codes: roomCode,
@@ -360,7 +358,6 @@ export async function createRoomCode(roomId: string): Promise<RoomCode[]> {
         },
       }
     );
-    console.log(`Room ${roomId} code created`);
     return response.data.data;
   } catch (error) {
     console.error(error);
