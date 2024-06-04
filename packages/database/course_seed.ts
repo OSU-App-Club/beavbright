@@ -3,7 +3,16 @@ import scraper from "./scraper";
 import ora from "ora";
 const client = new PrismaClient();
 
+const force = process.argv.indexOf("-f") > -1;
+
 async function main() {
+  if (!force && (await client.course.count()) > 1000) {
+    ora().succeed("Courses already seeded");
+    console.log(
+      "\nTo force a scrape, use the following command:\npnpm --filter database db:scrape -f\n"
+    );
+    return;
+  }
   const spinner = ora("Fetching courses... This might take a while.").start();
 
   try {

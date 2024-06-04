@@ -173,6 +173,9 @@ importers:
         specifier: ^4.10.2
         version: 4.10.2
     devDependencies:
+      '@types/node':
+        specifier: ^17.0.12
+        version: 17.0.12
       prisma:
         specifier: 5.5.2
         version: 5.5.2

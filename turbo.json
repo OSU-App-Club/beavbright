@@ -19,7 +19,7 @@
     },
     "lint": {},
     "dev": {
-      "dependsOn": ["^dev", "^db:generate"],
+      "dependsOn": ["^dev", "^db:generate", "^db:scrape"],
       "cache": false,
       "persistent": true
     },
