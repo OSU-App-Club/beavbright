@@ -3,7 +3,8 @@ import axios from "axios";
 type Course = {
   crn: string; // Course Registration Number
   type: string; // Schedule type (Lecture, Recitation, Lab)
-  code: string; // Subject + Number (MTH254, CS162)
+  subject: string; // Subject Code (MTH, CS)
+  code: string; // Course Code (254, 162)
   title: string; // Course title (Data Structures, Web Development)
   professor: string; // Professor name
 };
@@ -60,7 +61,7 @@ class CourseScraper {
     ) {
       pool.push(
         this.search(cookies, {
-          pageOffset: 0,
+          pageOffset: offset,
           pageMaxSize: pageMax,
           txt_term: term,
         })
@@ -101,8 +102,9 @@ class CourseScraper {
     return {
       crn: courseData.courseReferenceNumber,
       type: courseData.scheduleTypeDescription,
-      code: courseData.subjectCourse,
+      code: courseData.courseNumber,
       title: courseData.courseTitle,
+      subject: courseData.subject,
       professor: professorName,
     };
   }
