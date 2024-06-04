@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import type { PutBlobResult } from '@vercel/blob';
-import { useState, useRef } from 'react';
+import { type PutBlobResult } from "@vercel/blob";
+import { upload } from "@vercel/blob/client";
+import { useRef, useState } from "react";
 
-export default function AvatarUpload() {
+export default function AvatarUploadPage() {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [blob, setBlob] = useState<PutBlobResult | null>(null);
   return (
@@ -20,15 +21,10 @@ export default function AvatarUpload() {
 
           const file = inputFileRef.current.files[0];
 
-          const response = await fetch(
-            `/api/avatar/upload?filename=${file.name}`,
-            {
-              method: 'POST',
-              body: file,
-            },
-          );
-
-          const newBlob = (await response.json()) as PutBlobResult;
+          const newBlob = await upload(file.name, file, {
+            access: "public",
+            handleUploadUrl: "/api/avatar/upload",
+          });
 
           setBlob(newBlob);
         }}
