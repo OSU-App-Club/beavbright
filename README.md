@@ -93,6 +93,10 @@ pnpm --filter database db:init
 pnpm run dev
 ```
 
+> [!NOTE]
+> The first time you run this command, it could take around 2 minutes as it
+> fetches data from OSU's registrar.
+
 <!-- ### Docker
 
 Both the api (`api.Dockerfile`) and the web app (`web.Dockerfile`) are dockerized and managed by docker-compose (`docker-compose.yml`). You can start everything with:
