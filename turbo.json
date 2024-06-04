@@ -8,14 +8,16 @@
     ],
     "globalEnv": [
         "NODE_ENV",
-        "JWT_SECRET"
+        "JWT_SECRET",
+        "HMS_MANAGEMENT_TOKEN",
+        "HMS_TEMPLATE_ID"
     ],
     "pipeline": {
         "build": {
             "dependsOn": [
+                "^build",
                 "^db:generate",
-                "db:push",
-                "^build"
+                "^db:push"
             ],
             "outputs": [
                 ".next/**",

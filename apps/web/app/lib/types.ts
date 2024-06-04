@@ -1,10 +1,24 @@
+import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
+
 export interface User {
   id: string;
+  name: string;
+  email: string;
+  emailVerified: Date;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
   firstName: string;
   lastName: string;
-  email: string;
   password: string;
   avatar: string;
+  lastLogin: Date;
+  Discussion?: Discussion[];
+  Reply?: Reply[];
+}
+export interface MessaageBoxProps {
+  sender: string;
+  message: string;
 }
 
 export interface DiscussionCardProps {
@@ -73,4 +87,97 @@ export type CreateReplyFields = {
   discussionId: string;
   posterId: string;
   replyId?: string;
+};
+
+export type JoinCourseFields = {
+  code: number;
+  subject: string;
+  title: string;
+};
+
+export type CourseFields = {
+  course: string;
+  users: {
+    label: string;
+    value: string;
+    disable?: boolean | undefined;
+  }[];
+};
+
+export type RoomFields = {
+  name: string;
+  description?: string;
+  courseId: string;
+  creatorId: string;
+  subject: string;
+  code: number;
+};
+
+export type RoomData = {
+  name: string;
+  description: string;
+};
+
+export type RoomResponse = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+  customer_id: string;
+  app_id: string;
+  recording_info: {
+    enabled: boolean;
+  };
+  template_id: string;
+  template: string;
+  region: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RoomCreateError = {
+  code: number;
+  message: string;
+  details: string[];
+};
+
+export type HmsRoom = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  description: string;
+  customer_id: string;
+  recording_source_template: boolean;
+  template_id: string;
+  template: string;
+  region: string;
+  created_at: string;
+  key: string;
+  updated_at: string;
+  large_room: boolean;
+  max_duration_seconds: number;
+  recording?: {
+    enabled: boolean;
+  };
+  size?: number;
+  codes?: RoomCode[];
+};
+
+export interface RoomCardProps {
+  room: PrismaRoom;
+}
+
+export type RoomCode = {
+  code: string;
+  room_id: string;
+  role: string;
+  enabled: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ListRoomsResponse = {
+  limit: number;
+  data: HmsRoom[];
+  last: string;
 };

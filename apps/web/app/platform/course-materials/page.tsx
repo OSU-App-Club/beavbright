@@ -1,11 +1,11 @@
-import UserCard from "@/components/user-card";
-// import AvatarUpload from "../(components)/upload";
-
-export default function Page() {
+export default async function CourseMaterialPage() {
   return (
     <>
-      {/* <AvatarUpload /> */}
-      <UserCard />
+      <main className="container mx-auto grid grid-cols-1 w-4/6 gap-8 p-4">
+        <div className="space-y-8">
+          <div>Course Material</div>
+        </div>
+      </main>
     </>
   );
 }

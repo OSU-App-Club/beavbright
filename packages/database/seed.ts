@@ -9,18 +9,45 @@ async function main() {
   const discussionsPerUser = 1;
   const repliesPerDiscussion = 5;
 
+  const discrete = await prisma.course.create({
+    data: {
+      subject: "MTH",
+      code: 231,
+      title: "Elements of Discrete Mathematics",
+    },
+  });
+  const dataStructures = await prisma.course.create({
+    data: {
+      subject: "CS",
+      code: 161,
+      title: "Data Structures",
+    },
+  });
+  const webDev = await prisma.course.create({
+    data: {
+      subject: "CS",
+      code: 290,
+      title: "Web Development",
+    },
+  });
+
   for (let i = 0; i < numberOfUsers; i++) {
     const user = await prisma.user.create({
       data: {
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
+        name: faker.person.fullName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        image:
+          "https://lh3.googleusercontent.com/a/ACg8ocJkHQ6wtbjTPDHKMErXe4KKO332jRZ-KjNoMixsl-QvahhfaCY=s96-c",
         avatar: faker.image.avatar(),
+        Course: {
+          connect: [discrete, dataStructures, webDev][i % 3],
+        },
       },
       include: {
         Discussion: true,
         Reply: true,
+        Course: true,
       },
     });
 

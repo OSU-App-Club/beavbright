@@ -1,5 +1,10 @@
 "use client";
 
+import { routeList, sidebarNavItems } from "@/app/lib/constants";
+import { Icons } from "@/components/icons";
+import { ModeToggle } from "@/components/mode-toggle";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { Button, buttonVariants } from "@ui/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,17 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@ui/components/ui/sheet";
-import { useState } from "react";
-
-import { routeList, sidebarNavItems } from "@/app/lib/constants";
-import { Button } from "@ui/components/ui/button";
-
-import { Icons } from "@/components/icons";
-import { ModeToggle } from "@/components/mode-toggle";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { buttonVariants } from "@ui/components/ui/button";
 import { cn } from "@ui/lib/utils";
 import { BrainCog, Menu } from "lucide-react";
+import { useState } from "react";
 import { SidebarNav } from "./nav-links";
 
 interface JWTPayload {
@@ -33,6 +30,9 @@ interface JWTPayload {
 
 export function Navbar({ session }: { session: JWTPayload | null }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  if (!session) {
+    return null;
+  }
   return (
     <header className="sticky md:relative top-0 z-40 bg-transparent backdrop-blur-lg flex justify-center items-center p-8">
       <NavigationMenu>
@@ -127,14 +127,6 @@ export function Navbar({ session }: { session: JWTPayload | null }) {
                   })}`}
                 >
                   Login
-                </a>
-                <a
-                  href="/register"
-                  className={`w-fit text-xl ${buttonVariants({
-                    variant: "ghost",
-                  })}`}
-                >
-                  Register
                 </a>
               </>
             )}

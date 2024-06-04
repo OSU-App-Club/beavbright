@@ -1,4 +1,4 @@
-import { getDiscussionDetails, getDiscussionReplies } from "@/app/lib/actions";
+import prisma from "@/app/lib/prisma";
 import { getSession } from "@/app/lib/session";
 import { SlashIcon } from "@radix-ui/react-icons";
 import {
@@ -14,11 +14,32 @@ import { DiscussionView } from "../view";
 
 export default async function Component() {
   const headersObj = headers();
-  const discussionDetails = await getDiscussionDetails(
-    headersObj.get("discussionId")
-  );
+  const discussionId = headersObj.get("discussionId");
+  if (!discussionId) {
+    throw new Error("No discussion found.");
+  }
+  const discussionDetails = await prisma.discussion.findUnique({
+    where: { id: discussionId },
+    include: {
+      poster: true,
+    },
+  });
+  const replies = await prisma.reply.findMany({
+    where: {
+      discussionId: discussionId,
+    },
+    include: {
+      poster: true,
+      discussion: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+  if (!discussionDetails) {
+    throw new Error("Discussion not found");
+  }
   const session = await getSession();
-  const replies = await getDiscussionReplies(headersObj.get("discussionId"));
 
   const breadcrumbs = [
     { href: "/platform", label: "Home" },
@@ -28,6 +49,7 @@ export default async function Component() {
       label: discussionDetails.title,
     },
   ];
+
   return (
     <>
       <div>
@@ -45,7 +67,8 @@ export default async function Component() {
             </nav>
           </div>
           <DiscussionView
-            discussionDetails={discussionDetails}
+            //   TODO: Fix this by adding the correct types
+            discussionDetails={discussionDetails as any}
             session={session}
             replies={JSON.parse(JSON.stringify(replies))}
           />
