@@ -4,15 +4,13 @@ import "@ui/styles/globals.css";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "BeavBright - Community Driven Study Platform for Oregon State University Students",
+  title: "BeavBright - Home",
   description:
     "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
   openGraph: {
     type: "website",
     url: "https://beavbright-web.vercel.app/",
-    title:
-      "BeavBright - Community Driven Study Platform for Oregon State University Students",
+    title: "BeavBright - Home",
     description:
       "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
     siteName: "BeavBright",

@@ -1,5 +1,3 @@
-import { BrainIcon } from "lucide-react";
-
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@ui/components/ui/button";
 import {
@@ -8,11 +6,35 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@ui/components/ui/tooltip";
+import { BrainIcon } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
-import { sidebarNavItems } from "../lib/constants";
-
-import { getSession } from "../lib/session";
 import UserAvatar from "../avatar";
+import { sidebarNavItems } from "../lib/constants";
+import { getSession } from "../lib/session";
+
+export const metadata: Metadata = {
+  title: "BeavBright - Platform",
+  description:
+    "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+  openGraph: {
+    type: "website",
+    url: "https://beavbright-web.vercel.app/",
+    title: "BeavBright - Platform",
+    description:
+      "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+    siteName: "BeavBright",
+    images: [
+      {
+        url: "https://beavbright-web.vercel.app/images/og.png",
+        secureUrl: "https://beavbright-web.vercel.app/images/og.png",
+        width: 2880,
+        height: 1612,
+        alt: "BeavBright - Platform",
+      },
+    ],
+  },
+};
 
 export default async function Layout({
   children,
