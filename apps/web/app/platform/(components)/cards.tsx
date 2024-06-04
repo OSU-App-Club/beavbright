@@ -8,6 +8,7 @@ import {
   viewDiscussionPost,
 } from "@/app/lib/actions";
 import {
+  CourseCardProps,
   DiscussionCardProps,
   DiscussionOpenerProps,
   DiscussionReply,
@@ -35,6 +36,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@ui/components/ui/card";
+import { Calendar } from "@ui/components/ui/calendar";
 import {
   Drawer,
   DrawerClose,
@@ -54,6 +56,12 @@ import {
 } from "@ui/components/ui/dropdown-menu";
 import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@ui/components/ui/navigation-menu";
 import {
   Select,
   SelectContent,
@@ -89,24 +97,35 @@ import { useState } from "react";
 
 export function Access() {
   return (
-    <div>
-      <Card className="rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Quick Access</h2>
-        <div className="grid gap-2 mt-2">
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Bird className="w-5 h-5" />
-            <span>View Courses</span>
-          </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Rabbit className="w-5 h-5" />
-            <span>View Study Groups</span>
-          </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Mic className="w-5 h-5" />
-            <span>View Discussions</span>
-          </Button>
-        </div>
-      </Card>
+    <div className="mt-3 border-b col-span-3">
+      <h2 className="text-lg font-semibold -mb-2">Quick Access</h2>
+      <div className="rounded-lg py-4 flex flex-row gap-3 flex-wrap">
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">View Courses</span>
+        </Button>
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">View Study Groups</span>
+        </Button>
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">View Discussions</span>
+        </Button>
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">Add Courses</span>
+        </Button>
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">Create Study Groups</span>
+        </Button>
+        <Button variant="outline" className="flex items-center">
+          <span className="text-sm">Create Discussions</span>
+        </Button>
+        <NavigationMenu className="rounded-lg flex items-center">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>+ Show more</NavigationMenuTrigger>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </div>
   );
 }
@@ -137,66 +156,42 @@ export function Create() {
 
 export function Search() {
   return (
-    <div>
-      <Card className=" rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Search</h2>
-        <div className="grid gap-2 mt-2">
-          <Label htmlFor="search">Search</Label>
-          <Input id="search" type="text" placeholder="Search" />
-        </div>
-      </Card>
+    <div className="min-w-[220px] w-[50vw] self-center">
+      <div className="grid gap-2 mt-2">
+        <Input id="search" type="text" placeholder="Search" />
+      </div>
     </div>
   );
 }
 
-export function ThreeRecentStudyGroups() {
+export function Schedule() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
   return (
-    <div>
-      <Card className="rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Recently Active Study Groups</h2>
-        <div className="grid mt-2">
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center transition-all duration-1000">
-              <DotFilledIcon className="w-5 h-5 text-blue-500" />
-              <span className="group-hover:hidden">CS 161 Study Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join CS 161 Study Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center transition-all duration-1000">
-              <DotFilledIcon className="w-5 h-5 text-red-500" />
-              <span className="group-hover:hidden">MTH 251 Study Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join MTH 251 Study Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center">
-              <DotFilledIcon className="w-5 h-5 text-green-500" />
-              <span className="group-hover:hidden">WR 121 Writing Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join WR 121 Writing Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-        </div>
-      </Card>
-    </div>
+    <Card className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-4 px-3">
+      <div className="col-span-1 justify-self-center">
+        <Calendar
+          mode="single"
+          className="rounded-md min-w-[278px] max-w-[278px]"
+          selected={date}
+          onSelect={setDate}
+        />
+      </div>
+
+      <div className="lg:col-span-2 col-span-1 flex flex-col gap-2 p-2">
+        <h2 className="font-semibold select-none">Upcoming Classes</h2>
+
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+      </div>
+    </Card>
   );
 }
 
@@ -236,12 +231,7 @@ export function CourseCard({
   display,
   students,
   rooms,
-}: {
-  course: Course;
-  display: "in" | "out" | "stats";
-  students?: number;
-  rooms?: number;
-}) {
+}: CourseCardProps) {
   const leave = async () => {
     try {
       await leaveStudyGroup(course.id);

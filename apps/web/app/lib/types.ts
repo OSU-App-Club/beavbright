@@ -1,3 +1,4 @@
+import { Course } from "database";
 import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
 
 export interface User {
@@ -25,6 +26,13 @@ export interface DiscussionCardProps {
   discussion: Discussion;
   session: SessionObject;
   categories: string[];
+}
+
+export interface CourseCardProps {
+  course: Course;
+  display: "in" | "out" | "stats";
+  students?: number;
+  rooms?: number;
 }
 
 export type SessionObject = {
