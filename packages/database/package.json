@@ -20,6 +20,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "@prisma/client": "5.5.2",
+    "axios": "^1.6.8",
     "ora": "^8.0.1",
     "tsx": "^4.10.2"
   },
