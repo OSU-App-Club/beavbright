@@ -17,7 +17,8 @@
             "dependsOn": [
                 "^build",
                 "^db:generate",
-                "^db:push"
+                "^db:push",
+                "^db:scrape"
             ],
             "outputs": [
                 ".next/**",
@@ -28,18 +29,22 @@
         "dev": {
             "dependsOn": [
                 "^dev",
-                "^db:generate"
+                "^db:generate",
+                "^db:scrape"
             ],
             "cache": false,
             "persistent": true
-        },
-        "db:init": {
-            "cache": false
         },
         "db:generate": {
             "cache": false
         },
         "db:push": {
+            "cache": false
+        },
+        "db:scrape": {
+            "dependsOn": [
+                "db:generate"
+            ],
             "cache": false
         }
     }

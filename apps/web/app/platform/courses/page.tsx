@@ -11,7 +11,6 @@ import {
 import { cn } from "@ui/lib/utils";
 import Link from "next/link";
 import { CourseCard } from "../(components)/cards";
-import { JoinCourseForm } from "../study-groups/form";
 
 async function getAllCourses() {
   const session = await getSession();
@@ -56,7 +55,6 @@ export default async function AllCoursesPage() {
             </TooltipProvider>
             <h1 className="text-3xl font-bold">All Courses</h1>
           </div>
-          <JoinCourseForm />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {allCourses.map((course) => (

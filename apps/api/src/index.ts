@@ -1,5 +1,5 @@
 import { serve } from "@hono/node-server";
-import { PrismaClient, User } from "database";
+import { PrismaClient, User, Course } from "database";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
