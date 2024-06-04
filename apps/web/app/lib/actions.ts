@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/app/lib/prisma";
-import { JoinCourseFields, type RoomCode } from "@/app/lib/types";
+import { type RoomCode } from "@/app/lib/types";
 import axios from "axios";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
@@ -50,26 +50,6 @@ export async function authorizeUser(email: string, password: string) {
   const cookiesAccepted = false;
   await createSession(user.id, cookiesAccepted);
 
-  return { success: true };
-}
-
-export async function createCourse(data: JoinCourseFields) {
-  const session = await getSession();
-  if (!session) throw new Error("Unauthorized");
-  const { subject, code, title } = data;
-  await prisma.course.create({
-    data: {
-      subject,
-      code,
-      title,
-      User: {
-        connect: {
-          id: session.user?.id,
-        },
-      },
-    },
-  });
-  revalidatePath("/platform/study-groups");
   return { success: true };
 }
 
