@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@ui/components/ui/tooltip";
-import { BrainIcon } from "lucide-react";
+import { BrainIcon, Menu } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import UserAvatar from "../avatar";
