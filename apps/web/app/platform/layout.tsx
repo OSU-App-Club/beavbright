@@ -12,6 +12,18 @@ import Link from "next/link";
 import UserAvatar from "../avatar";
 import { sidebarNavItems } from "../lib/constants";
 import { getSession } from "../lib/session";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@ui/components/ui/sheet";
+import { Input } from "@ui/components/ui/input";
+import { Label } from "@ui/components/ui/label";
 
 export const metadata: Metadata = {
   title: "BeavBright - Platform",
@@ -52,9 +64,43 @@ export default async function Layout({
         <div className="md:hidden fixed w-full z-10">
           <div className="flex flex-col">
             <header className="sticky top-0 z-10 flex h-[50px] items-center gap-1 border-b bg-background px-2">
-              <Button className="px-2 mr-1" variant="ghost">
-                <Menu className="h-5 w-5" />
-              </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button className="px-2 mr-1" variant="ghost">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"left"}>
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-2 w-full p-3">
+                    {sidebarNavItems.slice(0, 4).map((item, index) => (
+                      <Button
+                        key={index}
+                        variant="ghost"
+                        className="rounded-lg"
+                        aria-label={item.title}
+                      >
+                        <Link
+                          href={item.href}
+                          className="flex flex-row items-center"
+                        >
+                          <div className="pr-3">{item.icon}</div>
+                          <div>{item.title}</div>
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="button" className="mt-5">
+                        Close
+                      </Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
               <h1 className="text-lg font-semibold">BeavBright</h1>
               <div className="ml-auto flex flex-row gap-4 justify-center items-center">
                 <ModeToggle />
@@ -124,7 +170,7 @@ export default async function Layout({
           </TooltipProvider>
         </div>
 
-        <main className="flex flex-col w-full h-full p-4 overflow-y-auto mt-[50px] md:mt-[57px]">
+        <main className="flex flex-col min-h-full w-full h-full p-4 overflow-y-auto mt-[50px] md:mt-[57px]">
           {children}
         </main>
       </div>

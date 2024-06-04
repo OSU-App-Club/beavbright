@@ -58,7 +58,9 @@ import { Input } from "@ui/components/ui/input";
 import { Label } from "@ui/components/ui/label";
 import {
   NavigationMenu,
+  NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@ui/components/ui/navigation-menu";
@@ -86,6 +88,7 @@ import {
   Mic,
   MoreVertical,
   Paperclip,
+  Plus,
   Rabbit,
   Reply,
   Trash,
@@ -135,11 +138,33 @@ export function Access({
           categories={defaultCategories}
           userId={userId}
         />
-
         <NavigationMenu className="rounded-lg flex items-center">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>+ Show more</NavigationMenuTrigger>
+              <NavigationMenuTrigger>
+                <Plus width={15} height={15} className="mr-2"></Plus> Show more
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="p-2 md:w-[400px]">
+                  <NavigationMenuLink asChild>
+                    <div className="grid gap-1 grid-cols-1 md:grid-cols-2">
+                      <Button variant="outline" className="flex items-center">
+                        <Link
+                          href="https://github.com/OSU-App-Club/beavbright"
+                          target="_blank"
+                        >
+                          GitHub Page
+                        </Link>
+                      </Button>
+                      <Button variant="outline" className="flex items-center">
+                        <Link href="https://www.osuapp.club/" target="_blank">
+                          About us
+                        </Link>
+                      </Button>
+                    </div>
+                  </NavigationMenuLink>
+                </div>
+              </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
