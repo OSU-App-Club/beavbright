@@ -20,8 +20,8 @@ export default function NotFoundPage() {
                 Page not found
               </h5>
               <p className="dark:text-white mt-2 mb-6">
-                We're sorry, but the page you were looking for doesn't exist in
-                our source code.
+                We&apos;re sorry, but the page you were looking for doesn&apos;t
+                exist in our source code.
               </p>
               <Link
                 className={cn(
