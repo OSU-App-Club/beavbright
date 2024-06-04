@@ -30,6 +30,7 @@
       "cache": false
     },
     "db:scrape": {
+      "dependsOn": ["db:generate"],
       "cache": false
     }
   }
