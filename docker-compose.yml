@@ -6,8 +6,6 @@ services:
       - "3000:3000" # Reachable on localhost:3000
     depends_on:
       - api # Start after the API
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/beavbright
     develop:
       watch:
         - action: sync # Synchronize the files on your host ./apps/web with your containers /app/apps/web when any file changes in that path
