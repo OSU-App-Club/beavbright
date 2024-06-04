@@ -14,11 +14,13 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:postmigrate": "dotenv -e .env.local -- prisma generate",
     "db:seed": "dotenv -e .env.local -- npx tsx seed",
-    "db:clean": "dotenv -e .env.local -- prisma migrate reset --force"
+    "db:clean": "dotenv -e .env.local -- prisma migrate reset --force",
+    "db:seed-courses": "dotenv -e .env.local -- npx tsx course_seed.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "@prisma/client": "5.5.2",
+    "ora": "^8.0.1",
     "tsx": "^4.10.2"
   },
   "devDependencies": {
