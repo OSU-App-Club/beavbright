@@ -151,6 +151,7 @@ Currently, the monorepo contains the following packages and applications:
 | `db:migrate`     | Runs migrations in development. This includes creating new migrations from changes in Prisma schema and applying them.                                                      |
 | `db:postmigrate` | Generates Prisma client after running migrations.                                                                                                                           |
 | `db:seed`        | Executes the seed script to populate the database with initial data.                                                                                                        |
+| `db:scrape`      | Updates the database with data directly from OSU. Use the `-f` flag to run the command forcefully.                                                                                                  |
 | `db:clean`       | Resets the database by dropping all data and applying migrations from scratch. Uses `--force` to bypass safety checks.                                                      |
 
 ## Credits 🙏
