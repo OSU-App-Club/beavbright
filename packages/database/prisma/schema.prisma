@@ -95,8 +95,8 @@ model Course {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   subject   String
-  code      Int      @default(0)
-  title     String
+  code      String
+  title     String   @unique
   User      User[]
   Room      Room[]
 }
