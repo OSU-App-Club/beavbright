@@ -1,6 +1,30 @@
 import Image from "next/image";
 
 import { signIn } from "@/app/auth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "BeavBright - Login",
+  description:
+    "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+  openGraph: {
+    type: "website",
+    url: "https://beavbright-web.vercel.app/",
+    title: "BeavBright - Login",
+    description:
+      "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+    siteName: "BeavBright",
+    images: [
+      {
+        url: "https://beavbright-web.vercel.app/images/og.png",
+        secureUrl: "https://beavbright-web.vercel.app/images/og.png",
+        width: 2880,
+        height: 1612,
+        alt: "BeavBright - Login",
+      },
+    ],
+  },
+};
 
 export default function LoginPage() {
   return (
