@@ -43,7 +43,7 @@ export function CreateStudyGroupForm({
   courses: {
     id: string;
     subject: string;
-    code: number;
+    code: string;
     title: string;
     createdAt: Date;
   }[];
