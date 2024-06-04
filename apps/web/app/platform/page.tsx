@@ -24,11 +24,40 @@ async function getThreeRecentCourses() {
   }
 }
 
+async function getAllCourses() {
+  try {
+    const courses = await prisma.course.findMany({
+      include: {
+        User: true,
+      },
+    });
+
+    return courses;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get courses");
+  }
+}
+
+async function getAllUsers() {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, name: true, image: true },
+    });
+    return users;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get users");
+  }
+}
+
 export default async function Dashboard() {
   const session = await getSession();
   if (!session) {
     return null;
   }
+  const allCourses = await getAllCourses();
+  const users = await getAllUsers();
   const recentThreeCourses = await getThreeRecentCourses();
   return (
     <>
@@ -44,7 +73,11 @@ export default async function Dashboard() {
         <Search />
         <div className="max-md:px-3">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <Access />
+            <Access
+              users={users}
+              courses={allCourses}
+              userId={session.user?.id}
+            />
           </div>
           <div className="mt-7">
             <h2 className="text-lg font-semibold mb-2">Your Schedule</h2>
@@ -63,6 +96,9 @@ export default async function Dashboard() {
                   />
                 );
               })}
+              {recentThreeCourses.length == 0 && (
+                <div>You are not in any study groups yet.</div>
+              )}
             </div>
           </div>
         </div>

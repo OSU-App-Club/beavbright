@@ -94,30 +94,48 @@ import {
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  CreateDiscussionDialogButton,
+  CreateStudyGroupDialogButton,
+  JoinCourseDialogButton,
+} from "./dialogs";
+import { defaultCategories } from "@/app/lib/constants";
 
-export function Access() {
+export function Access({
+  users,
+  courses,
+  userId,
+}: {
+  userId: string | undefined;
+  users: { id: string; name: string | null; image: string | null }[];
+  courses: {
+    id: string;
+    subject: string;
+    code: number;
+    title: string;
+    createdAt: Date;
+  }[];
+}) {
   return (
     <div className="mt-3 border-b col-span-3">
       <h2 className="text-lg font-semibold -mb-2">Quick Access</h2>
       <div className="rounded-lg py-4 flex flex-row gap-3 flex-wrap">
         <Button variant="outline" className="flex items-center">
-          <span className="text-sm">View Courses</span>
+          <Link href="/platform/courses">View Courses</Link>
         </Button>
         <Button variant="outline" className="flex items-center">
-          <span className="text-sm">View Study Groups</span>
+          <Link href="/platform/study-groups">View Study Groups</Link>
         </Button>
         <Button variant="outline" className="flex items-center">
-          <span className="text-sm">View Discussions</span>
+          <Link href="/platform/discussions">View Discussions</Link>
         </Button>
-        <Button variant="outline" className="flex items-center">
-          <span className="text-sm">Add Courses</span>
-        </Button>
-        <Button variant="outline" className="flex items-center">
-          <span className="text-sm">Create Study Groups</span>
-        </Button>
-        <Button variant="outline" className="flex items-center">
-          <span className="text-sm">Create Discussions</span>
-        </Button>
+        <JoinCourseDialogButton />
+        <CreateStudyGroupDialogButton users={users} courses={courses} />
+        <CreateDiscussionDialogButton
+          categories={defaultCategories}
+          userId={userId}
+        />
+
         <NavigationMenu className="rounded-lg flex items-center">
           <NavigationMenuList>
             <NavigationMenuItem>
