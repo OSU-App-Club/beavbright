@@ -25,6 +25,7 @@
     "tsx": "^4.10.2"
   },
   "devDependencies": {
+    "@types/node": "^17.0.12",
     "prisma": "5.5.2"
   }
 }
