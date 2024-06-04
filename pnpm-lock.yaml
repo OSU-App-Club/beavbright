@@ -32,9 +32,6 @@ importers:
       '@hono/node-server':
         specifier: ^1.2.0
         version: 1.2.0
-      axios:
-        specifier: ^1.6.8
-        version: 1.6.8
       database:
         specifier: workspace:*
         version: link:../../packages/database
@@ -163,6 +160,9 @@ importers:
       '@prisma/client':
         specifier: 5.5.2
         version: 5.5.2(prisma@5.5.2)
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
       ora:
         specifier: ^8.0.1
         version: 8.0.1
