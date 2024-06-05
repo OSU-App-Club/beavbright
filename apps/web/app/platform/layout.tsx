@@ -58,7 +58,7 @@ export default async function Layout({
               </a>
             </div>
             <nav className="grid gap-1 p-2">
-              {sidebarNavItems.slice(0, 4).map((item) => (
+              {sidebarNavItems.slice(0, 5).map((item) => (
                 <Tooltip key={item.title}>
                   <TooltipTrigger asChild>
                     <Button
@@ -77,7 +77,7 @@ export default async function Layout({
               ))}
             </nav>
             <nav className="mt-auto grid gap-1 p-2">
-              {sidebarNavItems.slice(4).map((item) => (
+              {sidebarNavItems.slice(5).map((item) => (
                 <Tooltip key={item.title}>
                   <TooltipTrigger asChild>
                     <Button

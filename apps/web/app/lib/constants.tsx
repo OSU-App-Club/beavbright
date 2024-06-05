@@ -1,3 +1,4 @@
+import { SchoolIcon } from "lucide-react";
 import { Icons } from "../../components/icons";
 
 export const directoryRoutes = {
@@ -81,9 +82,14 @@ export const sidebarNavItems = [
     icon: <HomeIcon size={24} />,
   },
   {
-    title: "Study Groups",
-    href: "/platform/study-groups",
-    icon: <Users size={24} />,
+    title: "Courses",
+    href: "/platform/courses",
+    icon: <SchoolIcon size={24} />,
+  },
+  {
+    title: "Course Materials",
+    href: "/platform/course-materials",
+    icon: <BookIcon size={24} />,
   },
   {
     title: "Discussions",
@@ -91,9 +97,9 @@ export const sidebarNavItems = [
     icon: <ListIcon size={24} />,
   },
   {
-    title: "Course Materials",
-    href: "/platform/course-materials",
-    icon: <BookIcon size={24} />,
+    title: "Study Groups",
+    href: "/platform/study-groups",
+    icon: <Users size={24} />,
   },
   {
     title: "Profile",
