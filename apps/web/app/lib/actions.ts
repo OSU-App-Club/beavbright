@@ -223,7 +223,7 @@ export async function createNewDiscussion(data: {
       category: data.category,
       poster: {
         connect: {
-          id: data.userId,
+          id: session.user?.id,
         },
       },
     },

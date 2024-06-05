@@ -151,7 +151,7 @@ export default function View({
     <div>
       <section>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-2xl font-bold">Discussions</h2>
+          <h2 className="text-3xl font-bold">Discussions</h2>
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

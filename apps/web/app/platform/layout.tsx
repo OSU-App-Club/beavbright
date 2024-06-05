@@ -107,7 +107,7 @@ export default async function Layout({
           </div>
         </TooltipProvider>
 
-        <main className="flex flex-col min-h-full w-full h-full p-4 overflow-y-auto mt-[50px] md:mt-[57px]">
+        <main className="flex flex-col min-h-full w-full h-full p-4 overflow-y-auto">
           {children}
         </main>
       </div>

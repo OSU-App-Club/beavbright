@@ -46,7 +46,7 @@ export default async function DiscussionsPage() {
 
   return (
     <>
-      <main className="container mx-auto grid grid-cols-1 w-4/6 gap-8 p-4">
+      <main className="container mx-auto grid grid-cols-1 w-full gap-8 p-4">
         <div className="space-y-8">
           <View
             discussions={JSON.parse(JSON.stringify(discussions))}

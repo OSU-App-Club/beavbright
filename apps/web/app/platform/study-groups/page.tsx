@@ -93,7 +93,7 @@ export default async function StudyGroupsPage() {
   );
   return (
     <>
-      <div className="flex flex-col justify-between space-y-2 p-4">
+      <div className="flex flex-col justify-between space-y-4 p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Your Study Groups</h1>
           <CreateStudyGroupForm users={users} courses={allCourses} />
@@ -131,7 +131,7 @@ export default async function StudyGroupsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Suspense fallback={<div>Loading...</div>}>
             {!notInCourses.length ? (
-              <div className="p-2">No popular courses found.</div>
+              <div className="p-2">None yet.</div>
             ) : (
               notInCourses.map((course) => (
                 <CourseCard

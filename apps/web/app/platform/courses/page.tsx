@@ -34,28 +34,27 @@ export default async function AllCoursesPage() {
     <>
       <div className="flex flex-col justify-between space-y-2 gap-2 p-4">
         <div className="flex items-center justify-between">
-          <div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Link
-                    href="/platform/study-groups"
-                    className={cn(
-                      buttonVariants({
-                        variant: "link",
-                      })
-                    )}
-                  >
-                    <EnterIcon className="mr-2" />
-                    Your Study Groups
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>Go back</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <h1 className="text-3xl font-bold">All Courses</h1>
-          </div>
+          <h1 className="text-3xl font-bold">All Courses</h1>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Link
+                  href="/platform/study-groups"
+                  className={cn(
+                    buttonVariants({
+                      variant: "link",
+                    })
+                  )}
+                >
+                  <EnterIcon className="mr-2" />
+                  See Study Groups
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Go back</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {allCourses.map((course) => (
             <CourseCard

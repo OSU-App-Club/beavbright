@@ -116,6 +116,7 @@ export function VideoBox({ session }: { session: Session }) {
     try {
       await hmsActions.leave();
       router.push(`/platform/study-groups/${courseId}`);
+      router.refresh();
     } catch (e) {
       throw new Error("Failed to leave room");
     }

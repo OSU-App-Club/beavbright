@@ -42,7 +42,7 @@ export function CreateStudyGroupForm({
   }[];
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [open, setOpen] = useState(false);
   const optionSchema = z.object({
     label: z.string(),
     value: z.string(),
@@ -71,8 +71,8 @@ export function CreateStudyGroupForm({
       setLoading(false);
       toast.success("Course created successfully");
       form.reset();
+      setOpen(false);
     } catch (error) {
-      console.error(error);
       setLoading(false);
       toast.error("Failed to create course");
     }
@@ -84,8 +84,8 @@ export function CreateStudyGroupForm({
   }));
 
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button variant="outline" className="text-primary">
           <Plus className="mr-2" />
           New Study Group

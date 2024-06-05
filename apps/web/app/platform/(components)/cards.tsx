@@ -7,6 +7,7 @@ import {
   leaveStudyGroup,
   viewDiscussionPost,
 } from "@/app/lib/actions";
+import { defaultCategories } from "@/app/lib/constants";
 import {
   CourseCardProps,
   DiscussionCardProps,
@@ -18,16 +19,12 @@ import {
 import { Icons } from "@/components/icons";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/react/style.css";
-import {
-  ChatBubbleIcon,
-  CircleIcon,
-  DotFilledIcon,
-  EnterIcon,
-} from "@radix-ui/react-icons";
+import { ChatBubbleIcon, CircleIcon, EnterIcon } from "@radix-ui/react-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
 import { Badge } from "@ui/components/ui/badge";
 import { Blockquote } from "@ui/components/ui/blockquote";
 import { Button } from "@ui/components/ui/button";
+import { Calendar } from "@ui/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -36,7 +33,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@ui/components/ui/card";
-import { Calendar } from "@ui/components/ui/calendar";
 import {
   Drawer,
   DrawerClose,
@@ -78,7 +74,6 @@ import "@ui/styles/globals.css";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Bird,
   CameraIcon,
   ClockIcon,
   CornerDownLeft,
@@ -100,7 +95,6 @@ import {
   CreateStudyGroupDialogButton,
   JoinCourseDialogButton,
 } from "./dialogs";
-import { defaultCategories } from "@/app/lib/constants";
 
 export function Access({
   users,
@@ -216,7 +210,6 @@ export function Search() {
 
 export function Schedule() {
   const [date, setDate] = useState<Date | undefined>(new Date());
-
   return (
     <Card className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-4 px-3">
       <div className="col-span-1 justify-self-center">
@@ -299,46 +292,13 @@ export function CourseCard({
   };
   return (
     <Card>
-      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
-        <div className="space-y-1">
+      <CardHeader className="flex flex-wrap gap-2">
+        <div className="space-y-2">
           <CardTitle>
             {course.subject} {course.code}
           </CardTitle>
           <CardDescription>{course.title}</CardDescription>
         </div>
-        {/*
-        TODO: Encapsulate course actions within here
-         <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-          <Button variant="secondary" className="px-3 shadow-none">
-            Options
-          </Button>
-          <Separator orientation="vertical" className="h-[20px]" />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="px-2 shadow-none">
-                <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-              forceMount
-            >
-              <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <PlusIcon className="mr-2 h-4 w-4" /> Create List
-              </DropdownMenuItem>
-            </DropdownMenuContent>s
-          </DropdownMenu>
-        </div> */}
       </CardHeader>
       <CardContent>
         {/* TODO: Connect this to the DB state */}
@@ -406,7 +366,7 @@ export function RoomCard({ room }: RoomCardProps) {
               .map((code) => (
                 <Button
                   key={code.code}
-                  variant="outline"
+                  variant="default"
                   className="w-full"
                   onClick={() =>
                     router.push(
