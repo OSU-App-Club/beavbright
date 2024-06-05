@@ -1,37 +1,53 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local",
-    "**/.env.local",
-    "**/.env.*",
-    "**/.env"
-  ],
-  "globalEnv": [
-    "NODE_ENV",
-    "JWT_SECRET",
-    "HMS_MANAGEMENT_TOKEN",
-    "HMS_TEMPLATE_ID"
-  ],
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build", "^db:generate", "^db:push", "^db:scrape"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "lint": {},
-    "dev": {
-      "dependsOn": ["^dev", "^db:generate", "^db:scrape"],
-      "cache": false,
-      "persistent": true
-    },
-    "db:generate": {
-      "cache": false
-    },
-    "db:push": {
-      "cache": false
-    },
-    "db:scrape": {
-      "dependsOn": ["db:generate"],
-      "cache": false
+    "$schema": "https://turbo.build/schema.json",
+    "globalDependencies": [
+        "**/.env.*local",
+        "**/.env.local",
+        "**/.env.*",
+        "**/.env"
+    ],
+    "globalEnv": [
+        "NODE_ENV",
+        "JWT_SECRET",
+        "HMS_MANAGEMENT_TOKEN",
+        "HMS_TEMPLATE_ID",
+        "PROD_CLIENT_URL",
+        "DEV_CLIENT_URL"
+    ],
+    "pipeline": {
+        "build": {
+            "dependsOn": [
+                "^build",
+                "^db:generate",
+                "^db:push",
+                "^db:scrape"
+            ],
+            "outputs": [
+                ".next/**",
+                "!.next/cache/**"
+            ]
+        },
+        "lint": {},
+        "dev": {
+            "dependsOn": [
+                "^dev",
+                "^db:generate",
+                "^db:scrape"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "db:generate": {
+            "cache": false
+        },
+        "db:push": {
+            "cache": false
+        },
+        "db:scrape": {
+            "dependsOn": [
+                "db:generate"
+            ],
+            "cache": false
+        }
     }
-  }
 }

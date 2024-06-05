@@ -1,7 +1,5 @@
 "use client";
 
-import { createStudyGroup } from "@/app/lib/actions";
-import { VirtualizedCombobox } from "@/components/virtualized-combo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@ui/components/ui/button";
@@ -21,28 +19,32 @@ import {
   FormLabel,
   FormMessage,
 } from "@ui/components/ui/form";
-import MultipleSelector, { Option } from "@ui/components/ui/multi-select";
+import { Input } from "@ui/components/ui/input";
+import { Option } from "@ui/components/ui/multi-select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@ui/components/ui/select";
+import { Course } from "database";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export function CreateStudyGroupForm({
-  users,
+export default function CourseMaterialsForm({
   courses,
+  userId,
 }: {
-  users: { id: string; name: string | null; image: string | null }[];
-  courses: {
-    id: string;
-    subject: string;
-    code: string;
-    title: string;
-    createdAt: Date;
-  }[];
+  courses: Course[];
+  userId: string;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
+
   const optionSchema = z.object({
     label: z.string(),
     value: z.string(),
@@ -51,12 +53,13 @@ export function CreateStudyGroupForm({
 
   const formSchema = z.object({
     course: z.string().min(1),
-    users: z.array(optionSchema).min(1),
+    file: z.string().min(1),
+    link: z.string().optional(),
   });
 
-  const options: Option[] = users.map((user) => ({
-    label: user.name || "Unknown",
-    value: user.id,
+  const options: Option[] = courses.map((course) => ({
+    label: course.title,
+    value: course.id,
     disable: false,
   }));
 
@@ -67,33 +70,29 @@ export function CreateStudyGroupForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      await createStudyGroup(values);
+      // TODO: Add Crud
+      setOpen(false);
       setLoading(false);
       toast.success("Course created successfully");
       form.reset();
-      setOpen(false);
     } catch (error) {
+      console.error(error);
       setLoading(false);
       toast.error("Failed to create course");
     }
   }
 
-  const virtualizedCourses = courses.map((course) => ({
-    value: course.id,
-    label: `${course.subject}${course.code} - ${course.title}`,
-  }));
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button variant="outline" className="text-primary">
           <Plus className="mr-2" />
-          New Study Group
+          Add new course material
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full">
+      <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Create Study Group</DialogTitle>
+          <DialogTitle>Add Course Material</DialogTitle>
           <DialogDescription>Fill out the fields.</DialogDescription>
         </DialogHeader>
         <div className="grid">
@@ -103,19 +102,46 @@ export function CreateStudyGroupForm({
                 control={form.control}
                 name="course"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem>
                     <FormLabel>Course</FormLabel>
-                    <VirtualizedCombobox
-                      options={virtualizedCourses}
-                      searchPlaceholder="Select a course..."
-                      callback={({
-                        value,
-                      }: {
-                        value: string;
-                        label: string;
-                      }) => {
-                        form.setValue("course", value);
-                      }}
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={"None"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a course." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="None" disabled>
+                          None
+                        </SelectItem>
+                        {courses.map((course) => (
+                          <SelectItem
+                            key={course.id}
+                            value={course.id}
+                            disabled={false}
+                          >
+                            {course.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="file"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>File</FormLabel>
+                    <Input
+                      {...field}
+                      type="file"
+                      placeholder="Select a file..."
                     />
                     <FormMessage />
                   </FormItem>
@@ -123,32 +149,19 @@ export function CreateStudyGroupForm({
               />
               <FormField
                 control={form.control}
-                name="users"
+                name="link"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Users</FormLabel>
-                    <FormControl>
-                      <MultipleSelector
-                        {...field}
-                        defaultOptions={options}
-                        // TODO: Automatically select the current user
-                        placeholder={
-                          field.value?.length ?? ""
-                            ? ""
-                            : "Select users... (don't forget to add yourself!)"
-                        }
-                        emptyIndicator={<p>No Results Found.</p>}
-                      />
-                    </FormControl>
+                    <FormLabel>Link</FormLabel>
+                    <Input {...field} placeholder="Enter a link..." />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {loading ? (
                 <Button disabled className="w-full">
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  Adding...
                 </Button>
               ) : (
                 <Button type="submit" className="w-full">

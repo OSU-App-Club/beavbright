@@ -24,14 +24,46 @@ async function getTheirCourses() {
   }
 }
 
-async function getAllCourses() {
+async function getPopularCourses() {
   try {
     const courses = await prisma.course.findMany({
+      where: {
+        OR: [
+          {
+            User: {
+              some: {
+                id: {
+                  not: undefined,
+                },
+              },
+            },
+          },
+          {
+            Room: {
+              some: {
+                id: {
+                  not: undefined,
+                },
+              },
+            },
+          },
+        ],
+      },
       include: {
         User: true,
       },
     });
 
+    return courses;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get popular courses");
+  }
+}
+
+async function getAllCourses() {
+  try {
+    const courses = await prisma.course.findMany({ include: { User: true } });
     return courses;
   } catch (error) {
     console.error(error);
@@ -53,14 +85,15 @@ async function getAllUsers() {
 
 export default async function StudyGroupsPage() {
   const userCourses = await getTheirCourses();
+  const popularCourses = await getPopularCourses();
   const allCourses = await getAllCourses();
   const users = await getAllUsers();
-  const notInCourses = allCourses.filter(
+  const notInCourses = popularCourses.filter(
     (course) => !userCourses.some((userCourse) => userCourse.id === course.id)
   );
   return (
     <>
-      <div className="flex flex-col justify-between space-y-2 p-4">
+      <div className="flex flex-col justify-between space-y-4 p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Your Study Groups</h1>
           <CreateStudyGroupForm users={users} courses={allCourses} />
@@ -83,7 +116,7 @@ export default async function StudyGroupsPage() {
       </div>
       <div className="flex flex-col justify-between space-y-2 p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">All Courses</h1>
+          <h1 className="text-3xl font-bold">Popular Courses</h1>
           <Link
             href="/platform/courses"
             className={cn(
@@ -97,14 +130,18 @@ export default async function StudyGroupsPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Suspense fallback={<div>Loading...</div>}>
-            {notInCourses.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                display="out"
-                students={course.User.length}
-              />
-            ))}
+            {!notInCourses.length ? (
+              <div className="p-2">None yet.</div>
+            ) : (
+              notInCourses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  display="out"
+                  students={course.User.length}
+                />
+              ))
+            )}
           </Suspense>
         </div>
       </div>

@@ -27,6 +27,7 @@ model User {
   Course        Course[]
   RoomCreated   Room[]       @relation("CreatorOfRoom")
   RoomUser      Room[]       @relation("UserInRoom")
+  CourseMaterial CourseMaterial[]
 }
 
 model Account {
@@ -99,6 +100,7 @@ model Course {
   title     String   @unique
   User      User[]
   Room      Room[]
+    CourseMaterial CourseMaterial[]
 }
 
 model Room {
@@ -123,4 +125,16 @@ model RoomCode {
   room      Room     @relation(fields: [roomId], references: [id])
   role      String
   enabled   Boolean
+}
+
+model CourseMaterial {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  fileLink    String
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  uploaderId  String
+  uploader    User     @relation(fields: [uploaderId], references: [id])
+  description String
+  title       String
 }

@@ -1,7 +1,18 @@
 import UserAvatar from "../avatar";
 import prisma from "../lib/prisma";
 import { getSession } from "../lib/session";
-import { Access, CourseCard, Schedule, Search } from "./(components)/cards";
+
+const Access = dynamic(
+  () => import("@/app/platform/(components)/cards").then((mod) => mod.Access),
+  { ssr: false }
+);
+const Schedule = dynamic(
+  () => import("@/app/platform/(components)/cards").then((mod) => mod.Schedule),
+  { ssr: false }
+);
+
+import dynamic from "next/dynamic";
+import { CourseCard, Search } from "./(components)/cards";
 
 async function getThreeRecentCourses() {
   const session = await getSession();

@@ -1,20 +1,25 @@
 "use server";
 
+const PROD_URL = process.env.PROD_CLIENT_URL;
+const DEV_URL = process.env.DEV_CLIENT_URL;
+
+import { signOut } from "@/app/auth";
 import prisma from "@/app/lib/prisma";
-import { type RoomCode } from "@/app/lib/types";
+import { createSession, getSession, updateSession } from "@/app/lib/session";
+import {
+  CourseFields,
+  CreateMaterialFields,
+  CreateReplyFields,
+  LoginFields,
+  PrismaRoom,
+  RoomData,
+  RoomFields,
+  type RoomCode,
+} from "@/app/lib/types";
+import { PutBlobResult } from "@vercel/blob";
 import axios from "axios";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { revalidatePath } from "next/cache";
-import { signOut } from "../auth";
-import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
-import { createSession, getSession, updateSession } from "./session";
-import {
-  CourseFields,
-  CreateReplyFields,
-  LoginFields,
-  RoomData,
-  RoomFields,
-} from "./types";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -218,7 +223,7 @@ export async function createNewDiscussion(data: {
       category: data.category,
       poster: {
         connect: {
-          id: data.userId,
+          id: session.user?.id,
         },
       },
     },
@@ -442,5 +447,92 @@ export async function logOutUser() {
     await signOut();
   } catch (error: any) {
     return error;
+  }
+}
+
+export async function createNewCourseMaterial(data: CreateMaterialFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { courseId, fileLink, description, title } = data;
+
+  await prisma.courseMaterial.create({
+    data: {
+      createdAt: new Date(),
+      fileLink,
+      description,
+      title,
+      course: {
+        connect: {
+          id: courseId,
+        },
+      },
+      uploader: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+
+  revalidatePath(`/platform/course-materials`);
+}
+
+export async function uploadFile(formData: FormData) {
+  const host = process.env.NODE_ENV === "production" ? PROD_URL : DEV_URL;
+  const file = formData.get("file") as File;
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  if (!file) {
+    throw new Error("No file provided");
+  }
+  try {
+    const response = await fetch(`${host}/api/material/upload`, {
+      method: "POST",
+      headers: {
+        "content-type": file?.type || "application/octet-stream",
+      },
+      body: file,
+    });
+    if (response.status === 200) {
+      const { url, downloadUrl, pathname, contentDisposition, contentType } =
+        (await response.json()) as PutBlobResult;
+      revalidatePath(`/platform/course-materials`);
+      return {
+        url,
+        downloadUrl,
+        pathname,
+        contentDisposition,
+        contentType,
+      };
+    } else {
+      throw new Error("Failed to upload file");
+    }
+  } catch (error) {
+    throw new Error("Failed to upload file");
+  }
+}
+
+export async function deleteMaterial(url: string, materialId: string) {
+  const host = process.env.NODE_ENV === "production" ? PROD_URL : DEV_URL;
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  try {
+    const response = await fetch(`${host}/api/material/remove?url=${url}`, {
+      method: "DELETE",
+    });
+    await prisma.courseMaterial.delete({
+      where: {
+        id: materialId,
+      },
+    });
+    if (response.status === 200) {
+      revalidatePath(`/platform/course-materials`);
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    throw new Error("Failed to delete material");
   }
 }

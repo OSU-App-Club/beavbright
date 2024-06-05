@@ -1,5 +1,5 @@
 import { Course } from "database";
-import { PrismaRoom } from "../platform/study-groups/[courseId]/list";
+import { Prisma } from "database";
 
 export interface User {
   id: string;
@@ -188,4 +188,68 @@ export type ListRoomsResponse = {
   limit: number;
   data: HmsRoom[];
   last: string;
+};
+
+export type Option = {
+  value: string;
+  label: string;
+};
+
+export interface VirtualizedCommandProps {
+  height: string;
+  options: Option[];
+  placeholder: string;
+  selectedOption: Option;
+  onSelectOption?: (option: string) => void;
+  callback?: (option: { value: string; label: string }) => void;
+}
+
+export interface VirtualizedComboboxProps {
+  options: {
+    value: string;
+    label: string;
+  }[];
+  searchPlaceholder?: string;
+  width?: string;
+  height?: string;
+  callback?: (option: { value: string; label: string }) => void;
+}
+
+export interface CreateMaterialFields {
+  courseId: string;
+  fileLink: string;
+  description: string;
+  title: string;
+}
+
+export interface UploadFileFields {
+  file: File | null;
+  formData: FormData;
+}
+
+export type CourseWithMaterials = Prisma.CourseGetPayload<{
+  include: {
+    CourseMaterial: true;
+  };
+}>;
+
+// TODO: Clean up this regression
+type RegressedRoomCode = {
+  id: string;
+  createdAt: Date;
+  code: string;
+  roomId: string;
+  role: string;
+  enabled: boolean;
+};
+
+export type PrismaRoom = {
+  id: string;
+  createdAt: Date;
+  name: string;
+  description: string;
+  courseId: string;
+  creatorId: string;
+  hmsId: string;
+  hmsCode: RegressedRoomCode[];
 };

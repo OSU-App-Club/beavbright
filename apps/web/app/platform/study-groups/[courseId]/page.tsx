@@ -64,6 +64,19 @@ async function getRoomsByCourse(courseId: string) {
   }
 }
 
+async function getCourseName(courseId: string) {
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+    const codeSubject = `${course?.subject} ${course?.code}`;
+    return codeSubject;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to get course name");
+  }
+}
+
 export default async function RoomPage({
   params,
 }: {
@@ -71,10 +84,11 @@ export default async function RoomPage({
 }) {
   const rooms = await getRooms(params.courseId);
   const courseRooms = await getRoomsByCourse(params.courseId);
+  const courseName = await getCourseName(params.courseId);
   return (
     <>
       <main>
-        <ListRooms serverRooms={courseRooms} />
+        <ListRooms serverRooms={courseRooms} courseName={courseName} />
       </main>
     </>
   );
