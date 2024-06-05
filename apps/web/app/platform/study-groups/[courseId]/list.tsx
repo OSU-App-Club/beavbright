@@ -1,27 +1,8 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { PrismaRoom } from "@/app/lib/types";
+import { useCallback, useState } from "react";
 import { RoomCard } from "../../(components)/cards";
 import RoomForm from "./form";
-
-type RoomCode = {
-  id: string;
-  createdAt: Date;
-  code: string;
-  roomId: string;
-  role: string;
-  enabled: boolean;
-};
-
-export type PrismaRoom = {
-  id: string;
-  createdAt: Date;
-  name: string;
-  description: string;
-  courseId: string;
-  creatorId: string;
-  hmsId: string;
-  hmsCode: RoomCode[];
-};
 
 export default function ListRooms({
   serverRooms,

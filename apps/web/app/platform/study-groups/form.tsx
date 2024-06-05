@@ -1,6 +1,7 @@
 "use client";
 
 import { createStudyGroup } from "@/app/lib/actions";
+import { VirtualizedCombobox } from "@/components/virtualized-combo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@ui/components/ui/button";
@@ -20,15 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@ui/components/ui/form";
-import { Input } from "@ui/components/ui/input";
 import MultipleSelector, { Option } from "@ui/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@ui/components/ui/select";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -85,15 +78,20 @@ export function CreateStudyGroupForm({
     }
   }
 
+  const virtualizedCourses = courses.map((course) => ({
+    value: course.id,
+    label: `${course.subject}${course.code} - ${course.title}`,
+  }));
+
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <Button variant="outline" className="text-primary">
           <Plus className="mr-2" />
-          Create new study group
+          New Study Group
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="w-full">
         <DialogHeader>
           <DialogTitle>Create Study Group</DialogTitle>
           <DialogDescription>Fill out the fields.</DialogDescription>
@@ -105,33 +103,20 @@ export function CreateStudyGroupForm({
                 control={form.control}
                 name="course"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Course</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={"None"}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a a course." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="None" disabled>
-                          None
-                        </SelectItem>
-                        {courses.map((course) => (
-                          <SelectItem
-                            key={course.id}
-                            value={course.id}
-                            // TODO: Disable all courses user is in a study group for.
-                            disabled={false}
-                          >
-                            {course.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <VirtualizedCombobox
+                      options={virtualizedCourses}
+                      searchPlaceholder="Select a course..."
+                      callback={({
+                        value,
+                      }: {
+                        value: string;
+                        label: string;
+                      }) => {
+                        form.setValue("course", value);
+                      }}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

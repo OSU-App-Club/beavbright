@@ -1,7 +1,7 @@
 "use client";
 
 import { createHmsRoom } from "@/app/lib/actions";
-import { HmsRoom } from "@/app/lib/types";
+import { PrismaRoom } from "@/app/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@ui/components/ui/button";
@@ -28,7 +28,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { PrismaRoom } from "./list";
 
 export default function RoomForm({
   onAdd,
@@ -66,9 +65,9 @@ export default function RoomForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-full text-xl">
+        <Button variant="outline" className="text-primary">
           <Plus className="mr-2" />
-          Create Room
+          New Room
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px]">
