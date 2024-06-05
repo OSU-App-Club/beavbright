@@ -319,6 +319,11 @@ export async function getUserById(id: string) {
   return user;
 }
 
+export async function searchCourse(subject: string, code: string) {
+  const course = await prisma.course.findFirst({ where: { subject, code } });
+  return course;
+}
+
 export async function viewDiscussionPost(id: string) {
   await prisma.discussion.update({
     where: { id },
