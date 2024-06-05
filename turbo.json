@@ -10,7 +10,9 @@
         "NODE_ENV",
         "JWT_SECRET",
         "HMS_MANAGEMENT_TOKEN",
-        "HMS_TEMPLATE_ID"
+        "HMS_TEMPLATE_ID",
+        "PROD_CLIENT_URL",
+        "DEV_CLIENT_URL"
     ],
     "pipeline": {
         "build": {
