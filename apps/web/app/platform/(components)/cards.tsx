@@ -75,7 +75,6 @@ import { Separator } from "@ui/components/ui/separator";
 import { Textarea } from "@ui/components/ui/textarea";
 import { cn } from "@ui/lib/utils";
 import "@ui/styles/globals.css";
-import { Course } from "database";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -89,7 +88,6 @@ import {
   MoreVertical,
   Paperclip,
   Plus,
-  Rabbit,
   Reply,
   Trash,
   UserIcon,
@@ -114,7 +112,7 @@ export function Access({
   courses: {
     id: string;
     subject: string;
-    code: number;
+    code: string;
     title: string;
     createdAt: Date;
   }[];
@@ -122,14 +120,23 @@ export function Access({
   return (
     <div className="mt-3 border-b col-span-3">
       <h2 className="text-lg font-semibold -mb-2">Quick Access</h2>
-      <div className="rounded-lg py-4 flex flex-row gap-3 flex-wrap">
-        <Button variant="outline" className="flex items-center">
+      <div className="rounded-lg py-4 flex flex-row gap-3 flex-wrap max-[552px]:justify-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
           <Link href="/platform/courses">View Courses</Link>
         </Button>
-        <Button variant="outline" className="flex items-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
           <Link href="/platform/study-groups">View Study Groups</Link>
         </Button>
-        <Button variant="outline" className="flex items-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
           <Link href="/platform/discussions">View Discussions</Link>
         </Button>
         <JoinCourseDialogButton />
@@ -138,7 +145,7 @@ export function Access({
           categories={defaultCategories}
           userId={userId}
         />
-        <NavigationMenu className="rounded-lg flex items-center">
+        <NavigationMenu className="rounded-lg flex">
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuTrigger>
@@ -215,7 +222,7 @@ export function Schedule() {
       <div className="col-span-1 justify-self-center">
         <Calendar
           mode="single"
-          className="rounded-md min-w-[278px] max-w-[278px]"
+          className="rounded-md min-w-[278px] max-w-[278px] max-[324px]:scale-[80%]"
           selected={date}
           onSelect={setDate}
         />
@@ -335,7 +342,7 @@ export function CourseCard({
       </CardHeader>
       <CardContent>
         {/* TODO: Connect this to the DB state */}
-        <div className="flex space-x-4 text-sm text-muted-foreground mb-4">
+        <div className="flex space-x-4 text-sm text-muted-foreground mb-4 max-[345px]:flex-col max-[345px]:gap-2 flex-row">
           <div className="flex items-center">
             <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
             Computer Science
@@ -347,7 +354,7 @@ export function CourseCard({
           <div>Spring 2022</div>
         </div>
         {display === "in" && (
-          <div className="flex flex-row space-x-3">
+          <div className="flex flex-row gap-3 max-[345px]:flex-col max-[345px]:gap-2">
             <Link
               href={`/platform/study-groups/${course.id}`}
               className="w-full"

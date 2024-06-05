@@ -1,7 +1,7 @@
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import {
   BookIcon,
-  BrainCog,
+  Brain,
   BrainIcon,
   EyeIcon,
   EyeOffIcon,
@@ -15,14 +15,14 @@ import {
   Users,
 } from "lucide-react";
 export const Icons = {
-  logo: BrainCog,
+  logo: Brain,
   github: GitHubLogoIcon,
   spinner: Loader2Icon,
   eye: EyeIcon,
   eyeOff: EyeOffIcon,
   pyramid: Pyramid,
   shell: Shell,
-  brainCog: BrainCog,
+  brainCog: Brain,
   loader2: Loader2Icon,
   book: BookIcon,
   brain: BrainIcon,

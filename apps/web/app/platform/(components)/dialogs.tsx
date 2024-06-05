@@ -2,8 +2,9 @@
 
 import {
   createStudyGroup,
-  createCourse,
+  joinStudyGroup,
   createNewDiscussion,
+  searchCourse,
 } from "@/app/lib/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -33,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ui/components/ui/select";
-import { cn } from "@ui/lib/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -44,8 +44,7 @@ export function JoinCourseDialogButton() {
 
   const formSchema = z.object({
     subject: z.string().min(2).max(6),
-    code: z.number().positive(),
-    title: z.string().min(1),
+    code: z.string().min(2),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,10 +54,16 @@ export function JoinCourseDialogButton() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      await createCourse(values);
       setLoading(false);
-      toast.success("Course created successfully");
-      form.reset();
+      const course = await searchCourse(values.subject, values.code);
+      if (course) {
+        await joinStudyGroup(course.id);
+        toast.success("Successfully joined");
+        form.reset();
+      } else {
+        setLoading(false);
+        toast.error("Cannot find your course");
+      }
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -69,14 +74,17 @@ export function JoinCourseDialogButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center">
-          <span className="text-sm">Add Courses</span>
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:hidden"
+        >
+          <span className="text-sm">Search Courses</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>Create Course</DialogTitle>
-          <DialogDescription>Add your course here.</DialogDescription>
+          <DialogTitle>Search Courses</DialogTitle>
+          <DialogDescription>Search your course and join</DialogDescription>
         </DialogHeader>
         <div className="grid">
           <Form {...form}>
@@ -101,27 +109,7 @@ export function JoinCourseDialogButton() {
                   <FormItem>
                     <FormLabel>Code</FormLabel>
                     <FormControl>
-                      <Input
-                        onChange={(e) => {
-                          field.onChange(parseInt(e.target.value));
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="ex. Introduction to Computer Science"
-                        {...field}
-                      />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -130,11 +118,11 @@ export function JoinCourseDialogButton() {
               {loading ? (
                 <Button disabled className="w-full">
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  Joining...
                 </Button>
               ) : (
                 <Button type="submit" className="w-full">
-                  Add
+                  Join
                 </Button>
               )}
             </form>
@@ -153,7 +141,7 @@ export function CreateStudyGroupDialogButton({
   courses: {
     id: string;
     subject: string;
-    code: number;
+    code: string;
     title: string;
     createdAt: Date;
   }[];
@@ -198,7 +186,10 @@ export function CreateStudyGroupDialogButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:hidden"
+        >
           <span className="text-sm">Create Study Groups</span>
         </Button>
       </DialogTrigger>
@@ -334,7 +325,10 @@ export function CreateDiscussionDialogButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:hidden"
+        >
           <span className="text-sm">Create Discussions</span>
         </Button>
       </DialogTrigger>
