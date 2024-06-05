@@ -36,8 +36,8 @@ export function Navbar({ session }: { session: JWTPayload | null }) {
   return (
     <header className="sticky md:relative top-0 z-40 bg-transparent backdrop-blur-lg flex justify-center items-center p-8">
       <NavigationMenu>
-        <div className="flex justify-start">
-          <Icons.logo className="text-orange-600 mt-1" />
+        <div className="flex justify-start items-center">
+          <Icons.logo className="text-orange-600 mr-1" />
           <a href="/" className="ml-1 font-bold text-xl flex">
             BeavBright
           </a>
