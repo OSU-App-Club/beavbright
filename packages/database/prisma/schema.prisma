@@ -77,7 +77,7 @@ model Discussion {
   body      String
   category  String
   posterId  String
-  poster    User     @relation(fields: [posterId], references: [id])
+  poster    User     @relation(fields: [posterId], references: [id], onDelete: Cascade)
   Reply     Reply[]
 }
 
@@ -87,8 +87,8 @@ model Reply {
     body         String
     discussionId String     @map("discussionId")
     posterId     String     @map("posterId")
-    discussion   Discussion @relation(fields: [discussionId], references: [id])
-    poster       User       @relation(fields: [posterId], references: [id])
+    discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+    poster       User       @relation(fields: [posterId], references: [id], onDelete: Cascade)
 }
 
 model Course {
