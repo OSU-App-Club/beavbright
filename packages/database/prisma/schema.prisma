@@ -78,18 +78,18 @@ model Discussion {
   body      String
   category  String
   posterId  String
-  poster    User     @relation(fields: [posterId], references: [id])
+  poster    User     @relation(fields: [posterId], references: [id], onDelete: Cascade)
   Reply     Reply[]
 }
 
 model Reply {
-  id           String     @id @default(cuid())
-  createdAt    DateTime   @default(now())
-  body         String
-  discussionId String     @map("discussionId")
-  posterId     String     @map("posterId")
-  discussion   Discussion @relation(fields: [discussionId], references: [id])
-  poster       User       @relation(fields: [posterId], references: [id])
+    id           String     @id @default(cuid())
+    createdAt    DateTime   @default(now())
+    body         String
+    discussionId String     @map("discussionId")
+    posterId     String     @map("posterId")
+    discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+    poster       User       @relation(fields: [posterId], references: [id], onDelete: Cascade)
 }
 
 model Course {

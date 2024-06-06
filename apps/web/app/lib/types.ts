@@ -90,6 +90,12 @@ export type LoginFields = {
   password: string;
 };
 
+export type UserFields = {
+  firstName: string;
+  lastName: string;
+  image: string;
+};
+
 export type CreateReplyFields = {
   body: string;
   discussionId: string;

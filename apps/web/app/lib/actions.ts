@@ -11,6 +11,7 @@ import {
   CreateMaterialFields,
   CreateReplyFields,
   LoginFields,
+  UserFields,
   PrismaRoom,
   RoomData,
   RoomFields,
@@ -56,6 +57,31 @@ export async function authorizeUser(email: string, password: string) {
   await createSession(user.id, cookiesAccepted);
 
   return { success: true };
+}
+
+export async function updateUser(id: string, data: UserFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthroized");
+
+  const { firstName, lastName, image } = data;
+
+  await prisma.user.update({
+    where: { id },
+    data: {
+      firstName: firstName,
+      lastName: lastName,
+      avatar: image,
+    },
+  });
+}
+
+export async function deleteUser(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  if (!id) throw new Error("No user id provided");
+
+  await prisma.user.delete({ where: { id } });
+  revalidatePath("/");
 }
 
 export async function createStudyGroup(data: CourseFields) {
