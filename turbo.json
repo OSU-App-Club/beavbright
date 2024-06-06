@@ -8,13 +8,19 @@
     ],
     "globalEnv": [
         "NODE_ENV",
-        "JWT_SECRET"
+        "JWT_SECRET",
+        "HMS_MANAGEMENT_TOKEN",
+        "HMS_TEMPLATE_ID",
+        "PROD_CLIENT_URL",
+        "DEV_CLIENT_URL"
     ],
     "pipeline": {
         "build": {
             "dependsOn": [
                 "^build",
-                "^db:generate"
+                "^db:generate",
+                "^db:push",
+                "^db:scrape"
             ],
             "outputs": [
                 ".next/**",
@@ -25,7 +31,8 @@
         "dev": {
             "dependsOn": [
                 "^dev",
-                "^db:generate"
+                "^db:generate",
+                "^db:scrape"
             ],
             "cache": false,
             "persistent": true
@@ -34,6 +41,12 @@
             "cache": false
         },
         "db:push": {
+            "cache": false
+        },
+        "db:scrape": {
+            "dependsOn": [
+                "db:generate"
+            ],
             "cache": false
         }
     }

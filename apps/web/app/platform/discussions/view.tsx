@@ -1,5 +1,17 @@
 "use client";
+import {
+  createChildReply,
+  createNewDiscussion,
+  createNewReply,
+  deleteDiscussionReply,
+} from "@/app/lib/actions";
 import { Discussion } from "@/app/lib/types";
+import {
+  DiscussionCard,
+  DiscussionOpener,
+  DiscussionReplyList,
+} from "@/app/platform/(components)/cards";
+import { Icons } from "@/components/icons";
 import { Button } from "@ui/components/ui/button";
 import {
   Dialog,
@@ -29,25 +41,10 @@ import {
 } from "@ui/components/ui/select";
 import { Textarea } from "@ui/components/ui/textarea";
 import { cn } from "@ui/lib/utils";
-import { FilterIcon, SearchIcon } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-
-import {
-  createChildReply,
-  createNewDiscussion,
-  createNewReply,
-  deleteDiscussionReply,
-} from "@/app/lib/actions";
-import { Icons } from "@/components/icons";
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
 import "@ui/styles/globals.css";
 import { AnimatePresence } from "framer-motion";
-import {
-  DiscussionCard,
-  DiscussionOpener,
-  DiscussionReplyList,
-} from "../(components)/cards";
+import { FilterIcon, Plus, SearchIcon } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
 export default function View({
   discussions,
@@ -129,7 +126,8 @@ export default function View({
         category,
         userId: session.userId,
       });
-      setDiscussions((prev) => [newDiscussion, ...prev]);
+      //   TODO: Address these type mismatches by removing "as Discussion[]"
+      setDiscussions((prev) => [newDiscussion, ...prev] as Discussion[]);
       setTitle("");
       setContentText("");
       setCategory("");
@@ -153,7 +151,7 @@ export default function View({
     <div>
       <section>
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-2xl font-bold">Discussions</h2>
+          <h2 className="text-3xl font-bold">Discussions</h2>
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -194,8 +192,9 @@ export default function View({
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  Start a Discussion
+                <Button size="sm" variant="outline" className="text-primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Discussion
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
@@ -333,7 +332,6 @@ export function DiscussionView({
           discussionId: discussionDetails.id,
           body: reply,
         });
-        console.log("MAIN newReply:\n", newReply);
         setReplies((replies) => [...replies, newReply]);
       } else {
         const newReply = await createChildReply({
@@ -342,7 +340,6 @@ export function DiscussionView({
           body: reply,
           replyId,
         });
-        console.log("CHILD newReply:\n", newReply);
         setReplies((replies) => [...replies, newReply]);
       }
     },

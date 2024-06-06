@@ -6,7 +6,6 @@
     },
     "dependencies": {
         "@hono/node-server": "^1.2.0",
-        "axios": "^1.6.8",
         "database": "workspace:*",
         "hono": "^3.8.2"
     },

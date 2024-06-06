@@ -1,21 +1,16 @@
 import { Button, buttonVariants } from "@ui/components/ui/button";
 import { LogOutIcon } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
+import { logOutUser } from "../lib/actions";
 import { redirect } from "next/navigation";
 
-const logOut = async (host: string) => {
-  let data = await fetch(`http://${host}/api/auth/logout`);
-  if (data.status === 200) {
-    redirect("/");
-  } else {
-    throw new Error("Failed to log out");
-  }
-};
-
 export default async function LogoutPage() {
-  const host = headers().get("host");
-  await logOut(host);
+  const logout = await logOutUser();
+  if (!logout) {
+    return null;
+  } else {
+    redirect("/login");
+  }
   return (
     <>
       <div className="flex items-center justify-center py-24 px-4 md:px-6">

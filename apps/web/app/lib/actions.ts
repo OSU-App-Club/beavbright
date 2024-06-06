@@ -1,16 +1,26 @@
 "use server";
 
+const PROD_URL = process.env.PROD_CLIENT_URL;
+const DEV_URL = process.env.DEV_CLIENT_URL;
+
+import { signOut } from "@/app/auth";
 import prisma from "@/app/lib/prisma";
-import { compareSync, hashSync } from "bcrypt-ts";
-import { revalidatePath } from "next/cache";
-import { createSession, updateSession, getSession } from "./session";
+import { createSession, getSession, updateSession } from "@/app/lib/session";
 import {
+  CourseFields,
+  CreateMaterialFields,
   CreateReplyFields,
   LoginFields,
   UserFields,
-  CourseFields,
+  PrismaRoom,
+  RoomData,
   RoomFields,
-} from "./types";
+  type RoomCode,
+} from "@/app/lib/types";
+import { PutBlobResult } from "@vercel/blob";
+import axios from "axios";
+import { compareSync, hashSync } from "bcrypt-ts";
+import { revalidatePath } from "next/cache";
 
 export async function createUser(data: LoginFields) {
   const { firstName, lastName, email, password } = data;
@@ -33,6 +43,10 @@ export async function authorizeUser(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
+    throw new Error("Incorrect email or password");
+  }
+
+  if (!user.password) {
     throw new Error("Incorrect email or password");
   }
 
@@ -70,19 +84,54 @@ export async function deleteUser(id: string) {
   revalidatePath("/");
 }
 
-export async function createCourse(data: CourseFields) {
+export async function createStudyGroup(data: CourseFields) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-
-  const { subject, code, title } = data;
-  await prisma.course.create({
+  const { course, users } = data;
+  await prisma.course.update({
+    where: { id: course },
     data: {
-      subject,
-      code,
-      title,
+      User: {
+        connect: users.map((user) => ({ id: user.value })),
+      },
     },
   });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
 
+export async function leaveStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        disconnect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  return { success: true };
+}
+
+export async function joinStudyGroup(courseId: string) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  await prisma.course.update({
+    where: { id: courseId },
+    data: {
+      User: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+  revalidatePath("/platform/study-groups");
+  revalidatePath("/platform/courses");
   return { success: true };
 }
 
@@ -169,9 +218,9 @@ export async function createChildReply(data: CreateReplyFields) {
 export async function deleteDiscussionReply(id: string) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
-
-  const dicussionId = (await prisma.reply.findUnique({ where: { id } }))
-    .discussionId;
+  const dicussionReply = await prisma.reply.findUnique({ where: { id } });
+  if (!dicussionReply) throw new Error("Reply not found");
+  const dicussionId = dicussionReply.discussionId;
   await prisma.reply.delete({ where: { id } });
   await prisma.discussion.update({
     where: { id: dicussionId },
@@ -200,7 +249,7 @@ export async function createNewDiscussion(data: {
       category: data.category,
       poster: {
         connect: {
-          id: data.userId,
+          id: session.user?.id,
         },
       },
     },
@@ -238,6 +287,8 @@ export async function editDiscussion(
   revalidatePath("/platform/discussions");
 }
 
+// TODO: Persist the 100ms room data to the database
+/*
 export async function createRoom(data: RoomFields) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
@@ -246,7 +297,7 @@ export async function createRoom(data: RoomFields) {
   const room = await prisma.room.create({
     data: {
       name,
-      description,
+      description: description ?? "",
       course: {
         connect: {
           id: courseId,
@@ -268,6 +319,7 @@ export async function createRoom(data: RoomFields) {
 
   return room;
 }
+*/
 
 export async function deleteRoom(id: string, subject: string, code: number) {
   const session = await getSession();
@@ -298,6 +350,11 @@ export async function getUserById(id: string) {
   return user;
 }
 
+export async function searchCourse(subject: string, code: string) {
+  const course = await prisma.course.findFirst({ where: { subject, code } });
+  return course;
+}
+
 export async function viewDiscussionPost(id: string) {
   await prisma.discussion.update({
     where: { id },
@@ -312,4 +369,196 @@ export async function viewDiscussionPost(id: string) {
 
 export async function acceptCookies() {
   await updateSession({ cookiesAccepted: true });
+}
+
+export async function createHmsRoom(
+  data: RoomData,
+  courseId: string
+): Promise<PrismaRoom> {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { name, description } = data;
+  const token = process.env.HMS_MANAGEMENT_TOKEN;
+  const templateId = process.env.HMS_TEMPLATE_ID;
+
+  try {
+    const response = await axios.post(
+      `https://api.100ms.live/v2/rooms`,
+      {
+        name,
+        description,
+        template_id: templateId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const roomId: string = response.data.id;
+    const roomData = await axios.get(
+      `https://api.100ms.live/v2/rooms/${roomId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const roomDetails = roomData.data;
+    const roomCode = await createRoomCode(roomDetails.id);
+
+    const room = await prisma.room.create({
+      data: {
+        name: roomDetails.name,
+        description: roomDetails.description,
+        hmsId: roomDetails.id,
+        creator: {
+          connect: {
+            id: session.user?.id,
+          },
+        },
+        course: {
+          connect: {
+            id: courseId,
+          },
+        },
+        hmsCode: {
+          createMany: {
+            data: roomCode.map((code) => ({
+              code: code.code,
+              role: code.role,
+              enabled: code.enabled,
+            })),
+          },
+        },
+      },
+      include: {
+        hmsCode: true,
+      },
+    });
+    return room;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create room");
+  }
+}
+
+export async function createRoomCode(roomId: string): Promise<RoomCode[]> {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  const token = process.env.HMS_MANAGEMENT_TOKEN;
+
+  try {
+    const response = await axios.post(
+      `https://api.100ms.live/v2/room-codes/room/${roomId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create room code");
+  }
+}
+
+export async function logOutUser() {
+  try {
+    await signOut();
+  } catch (error: any) {
+    return error;
+  }
+}
+
+export async function createNewCourseMaterial(data: CreateMaterialFields) {
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { courseId, fileLink, description, title } = data;
+
+  await prisma.courseMaterial.create({
+    data: {
+      createdAt: new Date(),
+      fileLink,
+      description,
+      title,
+      course: {
+        connect: {
+          id: courseId,
+        },
+      },
+      uploader: {
+        connect: {
+          id: session.user?.id,
+        },
+      },
+    },
+  });
+
+  revalidatePath(`/platform/course-materials`);
+}
+
+export async function uploadFile(formData: FormData) {
+  const host = process.env.NODE_ENV === "production" ? PROD_URL : DEV_URL;
+  const file = formData.get("file") as File;
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  if (!file) {
+    throw new Error("No file provided");
+  }
+  try {
+    const response = await fetch(`${host}/api/material/upload`, {
+      method: "POST",
+      headers: {
+        "content-type": file?.type || "application/octet-stream",
+      },
+      body: file,
+    });
+    if (response.status === 200) {
+      const { url, downloadUrl, pathname, contentDisposition, contentType } =
+        (await response.json()) as PutBlobResult;
+      revalidatePath(`/platform/course-materials`);
+      return {
+        url,
+        downloadUrl,
+        pathname,
+        contentDisposition,
+        contentType,
+      };
+    } else {
+      throw new Error("Failed to upload file");
+    }
+  } catch (error) {
+    throw new Error("Failed to upload file");
+  }
+}
+
+export async function deleteMaterial(url: string, materialId: string) {
+  const host = process.env.NODE_ENV === "production" ? PROD_URL : DEV_URL;
+  const session = await getSession();
+  if (!session) throw new Error("Unauthorized");
+  try {
+    const response = await fetch(`${host}/api/material/remove?url=${url}`, {
+      method: "DELETE",
+    });
+    await prisma.courseMaterial.delete({
+      where: {
+        id: materialId,
+      },
+    });
+    if (response.status === 200) {
+      revalidatePath(`/platform/course-materials`);
+      return { success: true };
+    } else {
+      return { success: false };
+    }
+  } catch (error) {
+    throw new Error("Failed to delete material");
+  }
 }

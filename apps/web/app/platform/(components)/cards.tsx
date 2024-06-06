@@ -1,80 +1,38 @@
 "use client";
-import {
-  DiscussionCardProps,
-  DiscussionOpenerProps,
-  DiscussionReply,
-  SessionObject,
-} from "@/app/lib/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
-import { Button } from "@ui/components/ui/button";
-import { Badge } from "@ui/components/ui/badge";
-import { format } from "date-fns";
-
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@ui/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@ui/components/ui/dropdown-menu";
-import { Input } from "@ui/components/ui/input";
-import { Label } from "@ui/components/ui/label";
-import { Separator } from "@ui/components/ui/separator";
-import { AnimatePresence, motion } from "framer-motion";
-import { useParams, useRouter } from "next/navigation";
-
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
-import "@ui/styles/globals.css";
-import {
-  Bird,
-  CameraIcon,
-  CornerDownLeft,
-  EyeIcon,
-  MessageCircleIcon,
-  Mic,
-  MoreVertical,
-  Paperclip,
-  Rabbit,
-  Reply,
-  Trash,
-  UserIcon,
-} from "lucide-react";
-
-import {
-  ChatBubbleIcon,
-  ChevronDownIcon,
-  CircleIcon,
-  DotFilledIcon,
-  EnterIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons";
 
 import {
   deleteDiscussison,
   editDiscussion,
+  joinStudyGroup,
+  leaveStudyGroup,
   viewDiscussionPost,
 } from "@/app/lib/actions";
-import { Blockquote } from "@ui/components/ui/blockquote";
-import { CardDescription, CardTitle } from "@ui/components/ui/card";
-import { DropdownMenuItem } from "@ui/components/ui/dropdown-menu";
+import { defaultCategories } from "@/app/lib/constants";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@ui/components/ui/select";
-import { cn } from "@ui/lib/utils";
-import { useState } from "react";
-
+  CourseCardProps,
+  DiscussionCardProps,
+  DiscussionOpenerProps,
+  DiscussionReply,
+  RoomCardProps,
+  SessionObject,
+} from "@/app/lib/types";
+import { Icons } from "@/components/icons";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/react/style.css";
+import { ChatBubbleIcon, CircleIcon, EnterIcon } from "@radix-ui/react-icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/ui/avatar";
+import { Badge } from "@ui/components/ui/badge";
+import { Blockquote } from "@ui/components/ui/blockquote";
+import { Button } from "@ui/components/ui/button";
+import { Calendar } from "@ui/components/ui/calendar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@ui/components/ui/card";
 import {
   Drawer,
   DrawerClose,
@@ -85,32 +43,133 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@ui/components/ui/drawer";
-
-import { Icons } from "@/components/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@ui/components/ui/dropdown-menu";
+import { Input } from "@ui/components/ui/input";
+import { Label } from "@ui/components/ui/label";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@ui/components/ui/navigation-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@ui/components/ui/select";
+import { Separator } from "@ui/components/ui/separator";
 import { Textarea } from "@ui/components/ui/textarea";
-import { ClockIcon } from "lucide-react";
+import { cn } from "@ui/lib/utils";
+import "@ui/styles/globals.css";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  CameraIcon,
+  ClockIcon,
+  CornerDownLeft,
+  EyeIcon,
+  MessageCircleIcon,
+  Mic,
+  MoreVertical,
+  Paperclip,
+  Plus,
+  Reply,
+  Trash,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  CreateDiscussionDialogButton,
+  CreateStudyGroupDialogButton,
+  JoinCourseDialogButton,
+} from "./dialogs";
 
-export function Access() {
+export function Access({
+  users,
+  courses,
+  userId,
+}: {
+  userId: string | undefined;
+  users: { id: string; name: string | null; image: string | null }[];
+  courses: {
+    id: string;
+    subject: string;
+    code: string;
+    title: string;
+    createdAt: Date;
+  }[];
+}) {
   return (
-    <div>
-      <Card className="rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Quick Access</h2>
-        <div className="grid gap-2 mt-2">
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Bird className="w-5 h-5" />
-            <span>View Courses</span>
-          </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Rabbit className="w-5 h-5" />
-            <span>View Study Groups</span>
-          </Button>
-          <Button variant="ghost" className="flex items-center gap-2">
-            <Mic className="w-5 h-5" />
-            <span>View Discussions</span>
-          </Button>
-        </div>
-      </Card>
+    <div className="mt-3 border-b col-span-3">
+      <h2 className="text-lg font-semibold -mb-2">Quick Access</h2>
+      <div className="rounded-lg py-4 flex flex-row gap-3 flex-wrap max-[552px]:justify-center">
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
+          <Link href="/platform/courses">View Courses</Link>
+        </Button>
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
+          <Link href="/platform/study-groups">View Study Groups</Link>
+        </Button>
+        <Button
+          variant="outline"
+          className="flex items-center max-[552px]:w-full"
+        >
+          <Link href="/platform/discussions">View Discussions</Link>
+        </Button>
+        <JoinCourseDialogButton />
+        <CreateStudyGroupDialogButton users={users} courses={courses} />
+        <CreateDiscussionDialogButton
+          categories={defaultCategories}
+          userId={userId}
+        />
+        <NavigationMenu className="rounded-lg flex">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>
+                <Plus width={15} height={15} className="mr-2"></Plus> Show more
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="p-2 md:w-[400px]">
+                  <NavigationMenuLink asChild>
+                    <div className="grid gap-1 grid-cols-1 md:grid-cols-2">
+                      <Button variant="outline" className="flex items-center">
+                        <Link
+                          href="https://github.com/OSU-App-Club/beavbright"
+                          target="_blank"
+                        >
+                          GitHub Page
+                        </Link>
+                      </Button>
+                      <Button variant="outline" className="flex items-center">
+                        <Link href="https://www.osuapp.club/" target="_blank">
+                          About us
+                        </Link>
+                      </Button>
+                    </div>
+                  </NavigationMenuLink>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </div>
   );
 }
@@ -141,66 +200,41 @@ export function Create() {
 
 export function Search() {
   return (
-    <div>
-      <Card className=" rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Search</h2>
-        <div className="grid gap-2 mt-2">
-          <Label htmlFor="search">Search</Label>
-          <Input id="search" type="text" placeholder="Search" />
-        </div>
-      </Card>
+    <div className="min-w-[220px] w-[50vw] self-center">
+      <div className="grid gap-2 mt-2">
+        <Input id="search" type="text" placeholder="Search" />
+      </div>
     </div>
   );
 }
 
-export function ThreeRecentStudyGroups() {
+export function Schedule() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   return (
-    <div>
-      <Card className="rounded-lg shadow-md p-4">
-        <h2 className="text-lg font-semibold">Recently Active Study Groups</h2>
-        <div className="grid mt-2">
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center transition-all duration-1000">
-              <DotFilledIcon className="w-5 h-5 text-blue-500" />
-              <span className="group-hover:hidden">CS 161 Study Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join CS 161 Study Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center transition-all duration-1000">
-              <DotFilledIcon className="w-5 h-5 text-red-500" />
-              <span className="group-hover:hidden">MTH 251 Study Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join MTH 251 Study Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex w-full justify-between items-center group"
-          >
-            <div className="flex items-center">
-              <DotFilledIcon className="w-5 h-5 text-green-500" />
-              <span className="group-hover:hidden">WR 121 Writing Group</span>
-              <span className="group-hover:opacity-100 opacity-0">
-                Join WR 121 Writing Group
-              </span>
-            </div>
-            <EnterIcon className="w-5 h-5 text-primary/0 group-hover:text-primary/100" />
-          </Button>
-        </div>
-      </Card>
-    </div>
+    <Card className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 py-4 px-3">
+      <div className="col-span-1 justify-self-center">
+        <Calendar
+          mode="single"
+          className="rounded-md min-w-[278px] max-w-[278px] max-[324px]:scale-[80%]"
+          selected={date}
+          onSelect={setDate}
+        />
+      </div>
+
+      <div className="lg:col-span-2 col-span-1 flex flex-col gap-2 p-2">
+        <h2 className="font-semibold select-none">Upcoming Classes</h2>
+
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+        <Card className="text-left text-sm p-2 leading-tight lg:text-center">
+          MTH 231 - Elements of Discrete Mathematics &#40;8:30 - 10:00&#41;
+        </Card>
+      </div>
+    </Card>
   );
 }
 
@@ -227,78 +261,89 @@ export function YourCourses() {
       <Card className="rounded-lg shadow-md p-4">
         <h2 className="text-lg font-semibold">Your Courses</h2>
         <div className="grid gap-2 mt-2">
-          <CourseCard />
-          <CourseCard />
+          {/* <CourseCard />
+          <CourseCard /> */}
         </div>
       </Card>
     </div>
   );
 }
 
-export function CourseCard() {
+export function CourseCard({
+  course,
+  display,
+  students,
+  rooms,
+}: CourseCardProps) {
+  const leave = async () => {
+    try {
+      await leaveStudyGroup(course.id);
+    } catch (error) {
+      throw new Error("Failed to leave study group");
+    }
+  };
+
+  const join = async () => {
+    try {
+      await joinStudyGroup(course.id);
+    } catch (error) {
+      throw new Error("Failed to join study group");
+    }
+  };
   return (
     <Card>
-      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
-        <div className="space-y-1">
-          <CardTitle>CS 161</CardTitle>
-          <CardDescription>Introduction to Computer Science</CardDescription>
-        </div>
-        <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-          <Button variant="secondary" className="px-3 shadow-none">
-            Options
-          </Button>
-          <Separator orientation="vertical" className="h-[20px]" />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="px-2 shadow-none">
-                <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-              forceMount
-            >
-              <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <PlusIcon className="mr-2 h-4 w-4" /> Create List
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+      <CardHeader className="flex flex-wrap gap-2">
+        <div className="space-y-2">
+          <CardTitle>
+            {course.subject} {course.code}
+          </CardTitle>
+          <CardDescription>{course.title}</CardDescription>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex space-x-4 text-sm text-muted-foreground mb-4">
+        {/* TODO: Connect this to the DB state */}
+        <div className="flex space-x-4 text-sm text-muted-foreground mb-4 max-[345px]:flex-col max-[345px]:gap-2 flex-row">
           <div className="flex items-center">
             <CircleIcon className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
             Computer Science
           </div>
           <div className="flex items-center">
             <UserIcon className="mr-1 h-3 w-3" />
-            120 Students
+            {students ?? "No"} Student{students === 1 ? "" : "s"}
           </div>
           <div>Spring 2022</div>
         </div>
-        <div className="flex flex-row space-x-3">
-          <Link href="study-groups/cs161" className="w-full">
-            <Button className="w-full">Enter</Button>
-          </Link>
-          <Button className="w-full">Leave</Button>
-        </div>
+        {display === "in" && (
+          <div className="flex flex-row gap-3 max-[345px]:flex-col max-[345px]:gap-2">
+            <Link
+              href={`/platform/study-groups/${course.id}`}
+              className="w-full"
+            >
+              <Button className="w-full">View Rooms</Button>
+            </Link>
+            <Button className="w-full" onClick={leave}>
+              Leave
+            </Button>
+          </div>
+        )}
+        {display === "out" && (
+          <div className="flex flex-row space-x-3">
+            <Button className="w-full" onClick={join}>
+              Join
+            </Button>
+          </div>
+        )}
+        {/* TODO: Implement this */}
+        {display === "stats" && <></>}
       </CardContent>
     </Card>
   );
 }
 
-export function RoomCard() {
+export function RoomCard({ room }: RoomCardProps) {
+  const router = useRouter();
+  const { courseId } = useParams<{ courseId: string }>();
+  if (!room.hmsCode) return null;
   return (
     <main>
       <Card>
@@ -309,15 +354,30 @@ export function RoomCard() {
               <ChatBubbleIcon className="w-5 h-5" />
               <Mic className="w-5 h-5" />
             </div>
-            <Badge className="bg-green-500">Live</Badge>
+            <Badge variant={"outline"} className="text-xs">
+              Created {new Date(room.createdAt).toLocaleDateString()}
+            </Badge>
           </div>
-          <CardTitle className="text-2xl">MTH 242 Study Session</CardTitle>
-          <CardDescription>Join the MTH 242 study session</CardDescription>
-          <div className="flex flex-row space-x-3">
-            <Link href="cs161/123x" className="w-full">
-              <Button className="w-full">Join</Button>
-            </Link>
-            <Button className="w-full">Leave</Button>
+          <CardTitle className="text-2xl truncate">{room.name}</CardTitle>
+          <CardDescription>{room.description}</CardDescription>
+          <div className="flex flex-row mt-4 gap-2">
+            {room.hmsCode
+              ?.filter((code) => code.role === "moderator")
+              .map((code) => (
+                <Button
+                  key={code.code}
+                  variant="default"
+                  className="w-full"
+                  onClick={() =>
+                    router.push(
+                      `/platform/study-groups/${courseId}/${code.code}`
+                    )
+                  }
+                >
+                  <EnterIcon className="w-4 h-4 mr-2" />
+                  Join Room
+                </Button>
+              ))}
           </div>
         </CardHeader>
       </Card>
@@ -335,13 +395,13 @@ export function DiscussionCard({
   const [newContent, setNewContent] = useState(discussion.body);
   const [loading, setLoading] = useState(false);
   const [newTitle, setNewTitle] = useState(discussion.title);
-
+  const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState(discussion.category);
-  const name = discussion.poster.firstName + " " + discussion.poster.lastName;
+  const name = discussion.poster.name;
+  const image = discussion.poster.image;
   const onSubmitTrash = async () => {
     await deleteDiscussison(discussion.id);
   };
-
   const onSubmitEdit = async () => {
     if (!newContent || !newTitle || !newCategory) {
       setError("Please fill in all fields.");
@@ -360,8 +420,6 @@ export function DiscussionCard({
     setLoading(false);
     setError(null);
   };
-
-  const [error, setError] = useState(null);
 
   const onViewDiscussion = async () => {
     await viewDiscussionPost(discussion.id);
@@ -388,8 +446,7 @@ export function DiscussionCard({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage alt={name} src={discussion.poster.avatar} />
-              {/* initials */}
+              <AvatarImage src={image} />
               <AvatarFallback>
                 {name.charAt(0) + name.split(" ")[1].charAt(0)}
               </AvatarFallback>
@@ -566,7 +623,7 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
   discussion,
   onAddReply,
 }) => {
-  const { firstName, lastName, avatar } = discussion.poster;
+  const { name, image } = discussion.poster;
   const {
     body: content,
     category,
@@ -576,9 +633,9 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
     title,
   } = discussion;
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [reply, setReply] = useState("");
-  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [reply, setReply] = useState<string>("");
+  const [open, setOpen] = useState<boolean>(false);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -590,25 +647,23 @@ export const DiscussionOpener: React.FC<DiscussionOpenerProps> = ({
       }, 4000);
       return;
     } else {
-      onAddReply(reply);
+      onAddReply && onAddReply(reply);
       setLoading(false);
       setOpen(false);
       setReply("");
     }
   };
+  console.log(image);
   return (
     <Card id={`reply-${discussionId}`}>
       <CardHeader>
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage
-              alt={firstName + " " + lastName + "'s image"}
-              src={avatar}
-            />
-            <AvatarFallback>{firstName[0] + lastName[0]}</AvatarFallback>
+            <AvatarImage src={image} />
+            <AvatarFallback>{name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
-            <div className="font-medium">{firstName + " " + lastName}</div>
+            <div className="font-medium">{name}</div>
             <div className="text-sm mt-2 text-gray-500 dark:text-gray-400">
               {category}
             </div>
@@ -698,8 +753,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
   const [loading, setLoading] = useState(false);
   const [reply, setReply] = useState("");
   const [open, setOpen] = useState(false);
-  const { firstName, lastName, avatar } = poster;
-  console.log("poster", poster);
+  const { image, name } = poster;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -712,7 +766,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
       }, 4000);
       return;
     } else {
-      onAddReply(reply, id);
+      onAddReply && onAddReply(reply, id);
       setLoading(false);
       setOpen(false);
       setReply("");
@@ -733,14 +787,11 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
         <CardHeader>
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                alt={firstName + " " + lastName + "'s image"}
-                src={avatar}
-              />
-              <AvatarFallback>{firstName[0] + lastName[0]}</AvatarFallback>
+              <AvatarImage alt={name} src={image} />
+              <AvatarFallback>{name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-medium">{firstName + " " + lastName}</div>
+              <div className="font-medium">{name}</div>
             </div>
             {poster.id === session.userId && (
               <div className="ml-auto flex items-center gap-2">
@@ -748,7 +799,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                   size="sm"
                   variant="outline"
                   className="h-8 gap-1"
-                  onClick={() => onDeleteReply(id)}
+                  onClick={() => onDeleteReply && onDeleteReply(id)}
                 >
                   <Trash className="h-3.5 w-3.5" />
                   <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
@@ -767,8 +818,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                 href={`/platform/discussions/${discussion.id}#reply-${id}`}
               >
                 {format(createdAt, "'On' MMMM dd, yyyy 'at' h:mm a")}{" "}
-                {poster.firstName}
-                {poster.lastName} wrote:
+                {poster.name} wrote:
               </Link>
               <h2 className="text-lg font-semibold -translate-y-1 text-muted-foreground/90">
                 {discussion.title}
@@ -794,7 +844,7 @@ export const DiscussionReplyCard: React.FC<DiscussionReply> = ({
                 size="sm"
                 variant="outline"
                 className="ml-auto h-8 gap-1"
-                onClick={() => onAddReply(reply, id)}
+                onClick={() => onAddReply && onAddReply(reply, id)}
               >
                 <Reply className="h-3.5 w-3.5" />
                 <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">

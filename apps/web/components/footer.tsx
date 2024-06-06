@@ -65,7 +65,7 @@ export const Footer = () => {
       </section>
       <section className="container pb-14 text-center">
         <h3>
-          &copy; 2024 BeavBright. Designed by{" "}
+          &copy; 2024 BeavBright. Built in Oregon by{" "}
           <a
             target="_blank"
             href="https://osuapp.club"

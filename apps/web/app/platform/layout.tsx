@@ -1,5 +1,3 @@
-import { BrainIcon } from "lucide-react";
-
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@ui/components/ui/button";
 import {
@@ -8,11 +6,35 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@ui/components/ui/tooltip";
+import { BrainIcon } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
-import { sidebarNavItems } from "../lib/constants";
-
-import { getSession } from "../lib/session";
 import UserAvatar from "../avatar";
+import { sidebarNavItems } from "../lib/constants";
+import { getSession } from "../lib/session";
+
+export const metadata: Metadata = {
+  title: "BeavBright - Platform",
+  description:
+    "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+  openGraph: {
+    type: "website",
+    url: "https://beavbright-web.vercel.app/",
+    title: "BeavBright - Platform",
+    description:
+      "A fully-featured study-platform for Oregon State University Students. Find course materials, create study groups, and more.",
+    siteName: "BeavBright",
+    images: [
+      {
+        url: "https://beavbright-web.vercel.app/images/og.png",
+        secureUrl: "https://beavbright-web.vercel.app/images/og.png",
+        width: 2880,
+        height: 1612,
+        alt: "BeavBright - Platform",
+      },
+    ],
+  },
+};
 
 export default async function Layout({
   children,
@@ -36,7 +58,7 @@ export default async function Layout({
               </a>
             </div>
             <nav className="grid gap-1 p-2">
-              {sidebarNavItems.slice(0, 4).map((item) => (
+              {sidebarNavItems.slice(0, 5).map((item) => (
                 <Tooltip key={item.title}>
                   <TooltipTrigger asChild>
                     <Button
@@ -55,7 +77,7 @@ export default async function Layout({
               ))}
             </nav>
             <nav className="mt-auto grid gap-1 p-2">
-              {sidebarNavItems.slice(4).map((item) => (
+              {sidebarNavItems.slice(5).map((item) => (
                 <Tooltip key={item.title}>
                   <TooltipTrigger asChild>
                     <Button
@@ -85,7 +107,7 @@ export default async function Layout({
           </div>
         </TooltipProvider>
 
-        <main className="flex flex-col w-full h-full p-4 overflow-y-auto">
+        <main className="flex flex-col min-h-full w-full h-full p-4 overflow-y-auto">
           {children}
         </main>
       </div>

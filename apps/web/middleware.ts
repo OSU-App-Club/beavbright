@@ -14,5 +14,16 @@ import { NextResponse } from "next/server";
 // TLDR; Prisma does not work on the vercel edge network, which the middleware runs on
 export default async function middleware(request: NextRequest) {
   //   const session: Session | null = await getSession();
+  if (request.nextUrl.pathname.startsWith("/platform/discussions/")) {
+    const discussionId = request.nextUrl.pathname.split("/").pop();
+    if (!discussionId) {
+      return NextResponse.error();
+    }
+    return NextResponse.next({
+      headers: {
+        discussionId,
+      },
+    });
+  }
   return NextResponse.next();
 }

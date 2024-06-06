@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@ui/components/card";
 
-import { Book, Group, Speech } from "lucide-react";
+import { Book, MessageCircle, Users } from "lucide-react";
 import Image from "next/image";
 
 interface ServiceProps {
@@ -25,13 +25,13 @@ const serviceList: ServiceProps[] = [
     title: "Discussion Forums",
     description:
       "Discuss with other students about the classes you are taking and get help from other students.",
-    icon: <Speech />,
+    icon: <MessageCircle />,
   },
   {
     title: "Class-Specific Groups",
     description:
       "Tell us the classes you are taking and we will pair you with other students in the same section.",
-    icon: <Group />,
+    icon: <Users />,
   },
 ];
 
